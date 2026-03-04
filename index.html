@@ -21,7 +21,12 @@
             padding: 10px 20px; background: white; border-bottom: 2px solid #e0e0e0;
             height: 100px; flex-shrink: 0;
         }
-
+        .header-left img {
+            height: 80px;      /* Deine gewünschte Höhe */
+            width: auto;       /* Verhindert, dass das Logo gequetscht wird */
+            display: block;    /* Entfernt unschöne Abstände unter dem Bild */
+            object-fit: contain; /* Sorgt dafür, dass das Bild sauber eingepasst wird */
+        }
         .header-center { font-size: 32px; color: #B40404; font-weight: bold; }
 
         /* DIGITAL UHR */
