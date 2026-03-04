@@ -21,34 +21,49 @@
             padding: 10px 20px; background: white; border-bottom: 2px solid #e0e0e0;
             height: 100px; flex-shrink: 0;
         }
+
         .header-left img {
-            height: 80px;      /* Deine gewünschte Höhe */
-            width: auto;       /* Verhindert, dass das Logo gequetscht wird */
-            display: block;    /* Entfernt unschöne Abstände unter dem Bild */
-            object-fit: contain; /* Sorgt dafür, dass das Bild sauber eingepasst wird */
+            height: 80px; width: auto; display: block; object-fit: contain;
         }
-        .header-center { font-size: 32px; color: #B40404; font-weight: bold; }
+
+        .header-center { font-size: 28px; color: #B40404; font-weight: bold; text-align: center; flex-grow: 1; }
 
         /* DIGITAL UHR */
-        .header-right { text-align: right; font-family: monospace; }
-        #datum { font-size: 1rem; color: #555; }
-        #uhrzeit { font-size: 3.5rem; font-weight: bold; color: #B40404; line-height: 1; }
+        .header-right { text-align: right; min-width: 250px; }
+        #datum { font-size: 1.1rem; color: #555; font-family: monospace; }
+        #uhrzeit { font-size: 3.5rem; font-weight: bold; color: #B40404; line-height: 1; font-family: monospace; }
         .uhr-sekunden { font-size: 1.8rem; color: #888; margin-left: 5px; }
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
 
         /* CONTENT */
         .content-container { display: flex; flex-grow: 1; padding: 15px; gap: 15px; overflow: hidden; }
-        .content-box { background: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; flex: 1; display: flex; flex-direction: column; }
-        .content-box h2 { color: #012796; text-align: center; margin-top: 0; }
+        
+        /* LINKE SPALTE: NEWS */
+        .content-box.main { flex: 2; display: flex; flex-direction: column; background: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; }
+        
+        /* RECHTE SPALTE: BUTTONS */
+        .content-box.side { flex: 1; display: flex; flex-direction: column; background: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; gap: 15px; }
+
+        .content-box h2 { color: #012796; text-align: center; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         
         /* NEWS CARDS */
-        #news-container { overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        #news-container { overflow-y: auto; display: flex; flex-direction: column; gap: 15px; flex-grow: 1; }
         .news-card { background: #fff; border-left: 6px solid #5cb85c; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .news-card.kat-dringend { border-left-color: #B40404; }
         .news-card.kat-dienst { border-left-color: #012796; }
-        .news-card h3 { margin: 0 0 5px 0; color: #012796; }
+        .news-card h3 { margin: 0 0 5px 0; color: #012796; font-size: 1.2rem; }
         .news-card p { margin: 0; color: #333; line-height: 1.4; }
+
+        /* BUTTONS */
+        .action-button {
+            width: 100%; padding: 18px; font-size: 18px; font-weight: bold; color: white;
+            background-color: #012796; border: none; border-radius: 10px;
+            cursor: pointer; transition: background 0.3s; text-align: center;
+        }
+        .action-button:hover { background-color: #001a66; }
+        .action-button.print { background-color: #5cb85c; }
+        .action-button.print:hover { background-color: #4cae4c; }
 
         .update-info { font-size: 0.7rem; color: #aaa; text-align: right; margin-top: 10px; }
     </style>
@@ -56,7 +71,9 @@
 <body>
 
     <div class="header-container">
-        <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" height="80"></div>
+        <div class="header-left">
+            <img src="Logo-redesign-LG13-removebg-preview.png" alt="Logo">
+        </div>
         <div class="header-center">Löschgruppenführung Aktuell</div>
         <div class="header-right">
             <div id="datum">Lade Datum...</div>
@@ -65,30 +82,52 @@
     </div>
 
     <div class="content-container">
-        <div class="content-box">
+        <div class="content-box main">
             <h2>Informationen & News</h2>
             <div id="news-container">
-                <p>Lade Daten vom Speicher...</p>
+                <p>Lade aktuelle Daten...</p>
+            </div>
+        </div>
+
+        <div class="content-box side">
+            <h2>Drucken / Formulare</h2>
+            <button class="action-button print" onclick="window.open('https://docs.google.com/spreadsheets/d/14beu0gUJXNM6OLCKKCS5m4r5c8Kb42qONXgWq2dkFwU/export?format=pdf&gid=0&size=A4&portrait=true&scale=2&top_margin=0.2&bottom_margin=0&left_margin=0.2&right_margin=0.2', '_blank')">
+                📄 Einsatznachweise
+            </button>
+            <button class="action-button print" onclick="window.open('https://docs.google.com/document/d/1gzdmqM2g4sl59nHyqAl_HE86x9-gcWHC_LbO_7iYW-s/export?format=pdf', '_blank')">
+                👥 Teilnehmerliste
+            </button>
+            <div style="margin-top: auto; font-size: 0.8rem; color: #777; text-align: center;">
+                Klick öffnet PDF-Vorschau zum Drucken.
             </div>
         </div>
     </div>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycby4cqLuPsVEGN_r0xSapBs_yM1syrGI45WkDBLLINPuwHiJcLZBal0_mdQMEQl9-OsG/exec";
+        let hasReloadedToday = false;
         let offlineTimer;
 
-        // 1. ZEIT-FUNKTION
+        // 1. UHRZEIT & NACHT-REFRESH
         function updateTime() {
             const jetzt = new Date();
             document.getElementById("datum").textContent = jetzt.toLocaleDateString('de-DE', {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric'});
+            
             const hh = String(jetzt.getHours()).padStart(2, '0');
             const mm = String(jetzt.getMinutes()).padStart(2, '0');
             const ss = String(jetzt.getSeconds()).padStart(2, '0');
             document.getElementById("uhrzeit").innerHTML = `${hh}<span class="blink">:</span>${mm}<span class="uhr-sekunden">${ss}</span>`;
+
+            // Nacht-Refresh um 03:00 Uhr
+            if (hh === "03" && mm === "00" && !hasReloadedToday) {
+                hasReloadedToday = true;
+                location.reload();
+            }
+            if (hh !== "03") hasReloadedToday = false;
         }
         setInterval(updateTime, 1000);
 
-        // 2. DATEN-LOGIK (Stale-While-Revalidate)
+        // 2. DATEN-ABFRAGE
         async function refreshData() {
             try {
                 const res = await fetch(API_URL);
@@ -100,26 +139,31 @@
 
         function renderUI(news) {
             const container = document.getElementById('news-container');
+            if (!news || news.length === 0) {
+                container.innerHTML = "<p>Keine aktuellen News vorhanden.</p>";
+                return;
+            }
             container.innerHTML = news.map(item => `
-                <div class="news-card kat-${item.kat.toLowerCase()}">
+                <div class="news-card kat-${(item.kat || 'info').toLowerCase()}">
                     <h3>${item.titel}</h3>
                     <p>${item.inhalt}</p>
                 </div>
-            `).join('') + `<div class="update-info">Stand: ${new Date().toLocaleTimeString()}</div>`;
+            `).join('') + `<div class="update-info">Zuletzt aktualisiert: ${new Date().toLocaleTimeString()}</div>`;
         }
 
-        // 3. START & WATCHDOG
+        // 3. INITIALISIERUNG & WATCHDOG
         window.addEventListener('DOMContentLoaded', () => {
             const cache = localStorage.getItem('news_cache');
             if (cache) renderUI(JSON.parse(cache));
+            updateTime();
             refreshData();
-            setInterval(refreshData, 300000); // 5 Min
+            setInterval(refreshData, 300000); // Alle 5 Min
         });
 
         window.addEventListener('offline', () => {
             offlineTimer = setTimeout(() => {
                 window.addEventListener('online', () => location.reload(), {once: true});
-            }, 600000); // 10 Min
+            }, 600000); 
         });
         window.addEventListener('online', () => clearTimeout(offlineTimer));
     </script>
