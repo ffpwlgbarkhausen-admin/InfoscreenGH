@@ -66,6 +66,42 @@
         .action-button.print:hover { background-color: #4cae4c; }
 
         .update-info { font-size: 0.7rem; color: #aaa; text-align: right; margin-top: 10px; }
+
+        /* MOBILE OPTIMIERUNG */
+@media (max-width: 768px) {
+    /* 1. Header anpassen */
+    .header-container {
+        height: auto;
+        flex-direction: column;
+        padding: 10px;
+    }
+    .header-center {
+        font-size: 1.2rem;
+        margin: 10px 0;
+    }
+    .header-right {
+        text-align: center;
+        min-width: unset;
+    }
+    #uhrzeit { font-size: 2.5rem; }
+
+    /* 2. Layout von Spalten auf Stapel umstellen */
+    .content-container {
+        flex-direction: column;
+        overflow-y: auto; /* Scrollen auf dem Handy erlauben */
+    }
+
+    .content-box.main, .content-box.side {
+        flex: none;
+        width: auto;
+    }
+
+    /* 3. Buttons für Daumen-Bedienung optimieren */
+    .action-button {
+        padding: 20px;
+        font-size: 1.1rem;
+    }
+}
     </style>
 </head>
 <body>
