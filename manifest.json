@@ -1,0 +1,22 @@
+{
+  "name": "Feuerwehr Infoscreen Barkhausen",
+  "short_name": "FW-Info",
+  "description": "Zentraler Infoscreen der Löschgruppe Barkhausen",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f0f0f0",
+  "theme_color": "#B40404",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/B40404/ffffff?text=FW",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/B40404/ffffff?text=Feuerwehr",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
