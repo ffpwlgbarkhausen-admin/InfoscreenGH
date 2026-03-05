@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Feuerwehr Barkhausen - Infoscreen</title>
     <link rel="manifest" href="manifest.json">
     <style>
@@ -21,19 +21,15 @@
             padding: 10px 20px; background: white; border-bottom: 2px solid #e0e0e0;
             height: 90px; flex-shrink: 0; z-index: 10;
         }
-        .header-left img { height: 75px; width: auto; cursor: pointer; transition: transform 0.2s; }
-        .header-left img:active { transform: scale(0.9); }
-        .header-center { font-size: 24px; color: #B40404; font-weight: bold; text-align: center; flex-grow: 1; }
-        .header-right { text-align: right; min-width: 220px; }
-        #uhrzeit { font-size: 3rem; font-weight: bold; color: #B40404; line-height: 1; font-family: monospace; }
-        .uhr-sekunden { font-size: 1.5rem; color: #888; }
+        .header-left img { height: 75px; width: auto; cursor: pointer; }
+        .header-center { font-size: 22px; color: #B40404; font-weight: bold; text-align: center; flex-grow: 1; }
+        .header-right { text-align: right; min-width: 200px; }
+        #uhrzeit { font-size: 2.8rem; font-weight: bold; color: #B40404; line-height: 1; font-family: monospace; }
+        .uhr-sekunden { font-size: 1.4rem; color: #888; }
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
-        
-        .refreshing { animation: pulse 0.8s ease-in-out; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* BUTTON BAR */
+        /* BUTTON BAR (Nur Kiosk/Desktop) */
         .button-bar {
             display: flex; background: #222; padding: 10px 20px; gap: 15px; 
             justify-content: center; flex-shrink: 0;
@@ -44,9 +40,10 @@
         }
         .action-button.blue { background-color: #012796; }
 
-        /* CONTENT AREA (50/50 Split) */
+        /* CONTENT AREA */
         .content-container { 
             display: flex; flex-grow: 1; padding: 20px; gap: 20px; overflow: hidden; 
+            touch-action: pan-y; /* Erlaubt vertikales Scrollen, blockiert horizontales System-Wischen */
         }
         .content-box { 
             background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
@@ -57,43 +54,46 @@
             font-size: 1.6rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;
         }
 
-        /* NEWS STYLING */
-        #news-container { overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .news-card { border-left: 6px solid #5cb85c; padding: 15px; background: #fff; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .news-card.kat-dringend { border-left-color: #B40404; }
-        .news-card img { width: 100%; border-radius: 8px; margin-bottom: 12px; max-height: 300px; object-fit: cover; display: block; }
-        .news-card h3 { margin: 0 0 8px 0; font-size: 1.4rem; color: #012796; }
-        .news-card p { font-size: 1.1rem; line-height: 1.4; color: #333; margin: 0; }
-
-        /* DIENSTPLAN STYLING */
-        #dienst-container { overflow-y: auto; flex-grow: 1; scroll-behavior: smooth; }
+        /* NEWS & DIENST STYLING */
+        #news-container, #dienst-container { overflow-y: auto; flex-grow: 1; }
+        .news-card { border-left: 6px solid #5cb85c; padding: 15px; background: #fff; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .news-card img { width: 100%; border-radius: 8px; margin-bottom: 12px; max-height: 250px; object-fit: cover; }
         .dienst-table { width: 100%; border-collapse: collapse; }
-        .dienst-table tr { border-bottom: 1px solid #eee; }
         .highlight-row { background-color: rgba(255, 235, 59, 0.15); border-left: 6px solid #FFD600; }
-        
-        .d-date-cell { width: 95px; text-align: center; border-right: 3px solid #eee; padding: 15px 5px; }
-        .d-date-text { font-size: 1.2rem; color: #B40404; font-weight: bold; white-space: nowrap; }
+        .d-date-cell { width: 90px; text-align: center; border-right: 2px solid #eee; padding: 12px 5px; }
         .badge-w { background: #012796; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
+
+        /* MOBILE BOTTOM NAV (Nur Mobile sichtbar) */
+        .mobile-nav {
+            display: none; height: 70px; background: white; border-top: 2px solid #e0e0e0;
+            justify-content: space-around; align-items: center; flex-shrink: 0;
+        }
+        .nav-item {
+            flex: 1; text-align: center; color: #888; font-weight: bold; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+        }
+        .nav-item.active { color: #B40404; }
+        .nav-item i { font-size: 1.4rem; }
 
         /* RESPONSIVE DESIGN */
         @media (max-width: 800px) {
-            .header-container { height: auto; flex-direction: column; padding: 10px; gap: 10px; }
-            .header-left img { height: 55px; }
-            .header-right { text-align: center; }
-            .content-container { flex-direction: column; overflow-y: auto; padding: 10px; }
-            .button-bar { flex-wrap: wrap; }
-            .action-button { flex: 1; min-width: 140px; font-size: 14px; }
-            .d-date-cell { width: 85px; }
-            .d-date-text { font-size: 1rem; }
+            .header-container { height: 70px; padding: 5px 15px; }
+            .header-left img { height: 50px; }
+            .header-center { font-size: 16px; }
+            .header-right { display: none; } /* Platz sparen */
+            .button-bar { display: none; } /* Oben ausblenden */
+            .mobile-nav { display: flex; } /* Unten einblenden */
+            .content-container { padding: 10px; gap: 0; }
+            .content-box { display: none; } /* Tabs umschalten */
+            .active-tab { display: flex !important; animation: fadeIn 0.3s; }
         }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div class="header-container">
-        <div class="header-left">
-            <img src="Logo-redesign-LG13-removebg-preview.png" id="logo-refresh" alt="Logo" onclick="manualRefresh()">
-        </div>
+        <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" alt="Logo" onclick="manualRefresh()"></div>
         <div class="header-center">Löschgruppenführung Barkhausen</div>
         <div class="header-right">
             <div id="uhrzeit">00:00<span class="uhr-sekunden">:00</span></div>
@@ -101,39 +101,68 @@
     </div>
 
     <div class="button-bar">
-        <button class="action-button" onclick="window.open('https://docs.google.com/spreadsheets/d/14beu0gUJXNM6OLCKKCS5m4r5c8Kb42qONXgWq2dkFwU/export?format=pdf&gid=0&size=A4&portrait=true&scale=2&top_margin=0.2&bottom_margin=0&left_margin=0.2&right_margin=0.2&attachment=false', '_blank')">📄 Einsatznachweis</button>
+        <button class="action-button" onclick="window.open('https://docs.google.com/spreadsheets/d/14beu0gUJXNM6OLCKKCS5m4r5c8Kb42qONXgWq2dkFwU/export?format=pdf', '_blank')">📄 Einsatznachweis</button>
         <button class="action-button blue" onclick="window.open('https://docs.google.com/document/d/1gzdmqM2g4sl59nHyqAl_HE86x9-gcWHC_LbO_7iYW-s/export?format=pdf', '_blank')">👥 Teilnehmerliste</button>
     </div>
 
-    <div class="content-container">
-        <div class="content-box box-news">
+    <div class="content-container" id="swipeArea">
+        <div id="tab-news" class="content-box active-tab">
             <h2>📢 Aktuelles</h2>
             <div id="news-container">Lade News...</div>
         </div>
-        <div class="content-box box-dienst">
+        <div id="tab-dienst" class="content-box active-tab">
             <h2>📅 Dienstplan</h2>
             <div id="dienst-container">Lade Dienstplan...</div>
         </div>
     </div>
 
+    <div class="mobile-nav">
+        <div class="nav-item active" id="btn-news" onclick="showTab('news')">
+            <span>📢</span> Aktuelles
+        </div>
+        <div class="nav-item" id="btn-dienst" onclick="showTab('dienst')">
+            <span>📅</span> Dienstplan
+        </div>
+        <div class="nav-item" onclick="window.open('https://docs.google.com/document/d/1gzdmqM2g4sl59nHyqAl_HE86x9-gcWHC_LbO_7iYW-s/export?format=pdf', '_blank')">
+            <span>📄</span> Listen
+        </div>
+    </div>
+
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycby4cqLuPsVEGN_r0xSapBs_yM1syrGI45WkDBLLINPuwHiJcLZBal0_mdQMEQl9-OsG/exec";
-        
+        let currentTab = 'news';
+
         function updateTime() {
             const jetzt = new Date();
-            const hh = String(jetzt.getHours()).padStart(2, '0');
-            const mm = String(jetzt.getMinutes()).padStart(2, '0');
-            const ss = String(jetzt.getSeconds()).padStart(2, '0');
-            document.getElementById("uhrzeit").innerHTML = `${hh}<span class="blink">:</span>${mm}<span class="uhr-sekunden">:${ss}</span>`;
-            if (hh === "03" && mm === "00") location.reload(); 
+            const hh = String(jetzt.getHours()).padStart(2, '0'), mm = String(jetzt.getMinutes()).padStart(2, '0'), ss = String(jetzt.getSeconds()).padStart(2, '0');
+            const e = document.getElementById("uhrzeit"); if(e) e.innerHTML = `${hh}<span class="blink">:</span>${mm}<span class="uhr-sekunden">:${ss}</span>`;
         }
         setInterval(updateTime, 1000);
 
-        async function manualRefresh() {
-            const logo = document.getElementById('logo-refresh');
-            logo.classList.add('refreshing');
+        // TAB NAVIGATION & SWIPE
+        function showTab(tab) {
+            if (window.innerWidth > 800) return;
+            currentTab = tab;
+            document.getElementById('tab-news').classList.toggle('active-tab', tab === 'news');
+            document.getElementById('tab-dienst').classList.toggle('active-tab', tab === 'dienst');
+            document.getElementById('btn-news').classList.toggle('active', tab === 'news');
+            document.getElementById('btn-dienst').classList.toggle('active', tab === 'dienst');
+        }
+
+        // SWIPE LOGIK
+        let touchStartX = 0;
+        document.getElementById('swipeArea').addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+        document.getElementById('swipeArea').addEventListener('touchend', e => {
+            let touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 70) showTab('dienst'); // Swipe Links -> Dienstplan
+            if (touchEndX - touchStartX > 70) showTab('news');   // Swipe Rechts -> News
+        });
+
+        async function manualRefresh() { 
+            const img = document.querySelector('.header-left img');
+            img.style.opacity = '0.5';
             await loadData();
-            setTimeout(() => logo.classList.remove('refreshing'), 800);
+            img.style.opacity = '1';
         }
 
         async function loadData() {
@@ -142,65 +171,49 @@
                 const data = await res.json();
                 renderNews(data.news);
                 renderDienst(data.dienste);
-            } catch (e) { console.error("Fehler beim Laden"); }
+            } catch (e) { console.error("Fehler"); }
         }
 
         function renderNews(news) {
-            const container = document.getElementById('news-container');
-            container.innerHTML = news.map(n => `
-                <div class="news-card kat-${n.kat.toLowerCase()}">
-                    ${n.bild ? `<img src="${n.bild}" alt="News">` : ''}
+            document.getElementById('news-container').innerHTML = news.map(n => `
+                <div class="news-card">
+                    ${n.bild ? `<img src="${n.bild}">` : ''}
                     <h3>${n.titel}</h3>
                     <p>${n.inhalt}</p>
                 </div>
-            `).join('') + `<div style="font-size:0.7rem; color:#aaa; text-align:right; margin-top:10px;">Update: ${new Date().toLocaleTimeString()}</div>`;
+            `).join('');
         }
 
         function renderDienst(dienste) {
             const container = document.getElementById('dienst-container');
-            const heute = new Date();
-            heute.setHours(0, 0, 0, 0);
-            let nextFound = false;
+            const heute = new Date(); heute.setHours(0,0,0,0);
+            let nextId = "";
 
-            container.innerHTML = `<table class="dienst-table">` + 
-                dienste.map(d => {
-                    let dObj = new Date(d.datum);
-                    let isNext = false;
-                    if (!nextFound && dObj >= heute) { isNext = true; nextFound = true; }
+            let html = `<table class="dienst-table">`;
+            dienste.forEach((d, idx) => {
+                let dObj = new Date(d.datum);
+                let isNext = (nextId === "" && dObj >= heute);
+                if (isNext) nextId = "next-row";
 
-                    let displayTime = d.uhrzeit;
-                    if (d.uhrzeit.includes('T')) {
-                        displayTime = d.uhrzeit.split('T')[1].substring(0, 5);
-                    }
+                let time = d.uhrzeit.includes('T') ? d.uhrzeit.split('T')[1].substring(0, 5) : d.uhrzeit;
+                let date = d.datum.includes('T') ? dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'}) : d.datum;
 
-                    let displayDate = d.datum;
-                    if (d.datum.includes('T')) {
-                        displayDate = dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
-                    }
-
-                    return `
-                    <tr ${isNext ? 'id="next-service" class="highlight-row"' : ''}>
-                        <td class="d-date-cell">
-                            <span class="d-date-text">${displayDate}</span><br>
-                            <span style="font-size: 0.95rem; font-weight: bold; color: #444;">${displayTime} Uhr</span>
-                        </td>
-                        <td style="padding-left: 15px; padding-top: 10px; padding-bottom: 10px;">
-                            <span style="font-size: 1.2rem; font-weight: 700; color: #000; display: block; margin-bottom: 5px;">${d.thema}</span>
-                            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                                <span class="badge-w">👕 ${d.kleidung}</span>
-                                <span style="font-size: 1.0rem; color: #555;">👤 ${d.leitung}</span>
-                            </div>
-                        </td>
-                    </tr>`;
-                }).join('') + `</table>`;
-
-            setTimeout(() => {
-                const nextElem = document.getElementById('next-service');
-                if (nextElem) nextElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 800);
+                html += `<tr ${isNext ? 'id="next-row" class="highlight-row"' : ''}>
+                    <td class="d-date-cell">
+                        <span style="color:#B40404; font-weight:bold; font-size:1.1rem;">${date}</span><br>
+                        <small>${time} Uhr</small>
+                    </td>
+                    <td style="padding:10px 15px;">
+                        <strong>${d.thema}</strong><br>
+                        <span class="badge-w">👕 ${d.kleidung}</span> <small>👤 ${d.leitung}</small>
+                    </td>
+                </tr>`;
+            });
+            container.innerHTML = html + `</table>`;
+            if(nextId) setTimeout(() => document.getElementById(nextId).scrollIntoView({behavior:'smooth', block:'start'}), 500);
         }
 
-        window.onload = () => { updateTime(); loadData(); setInterval(loadData, 300000); };
+        window.onload = () => { updateTime(); loadData(); };
     </script>
 </body>
 </html>
