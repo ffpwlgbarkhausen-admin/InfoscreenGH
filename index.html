@@ -8,30 +8,17 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
         
         :root {
-            --bg-color: #f4f4f4;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --header-bg: #ffffff;
-            --border-color: #e0e0e0;
-            --accent-color: #012796;
+            --bg-color: #f4f4f4; --card-bg: #ffffff; --text-main: #333; --header-bg: #ffffff;
+            --border-color: #e0e0e0; --accent-color: #012796;
         }
 
-        /* Darkmode Definitionen */
         [data-theme="dark"] {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-main: #e0e0e0;
-            --header-bg: #1e1e1e;
-            --border-color: #333333;
+            --bg-color: #121212; --card-bg: #1e1e1e; --text-main: #e0e0e0; --header-bg: #1e1e1e; --border-color: #333;
         }
 
         @media (prefers-color-scheme: dark) {
             [data-theme="system"] {
-                --bg-color: #121212;
-                --card-bg: #1e1e1e;
-                --text-main: #e0e0e0;
-                --header-bg: #1e1e1e;
-                --border-color: #333333;
+                --bg-color: #121212; --card-bg: #1e1e1e; --text-main: #e0e0e0; --header-bg: #1e1e1e; --border-color: #333;
             }
         }
 
@@ -42,37 +29,34 @@
             display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* HEADER */
         .header-container {
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 20px; background: var(--header-bg); border-bottom: 2px solid var(--border-color);
             height: 90px; flex-shrink: 0; z-index: 100;
         }
-        .header-left img { height: 70px; cursor: pointer; transition: 0.2s; }
+        .header-left img { height: 70px; cursor: pointer; }
         .header-center { font-size: 20px; color: #B40404; font-weight: bold; text-align: center; flex-grow: 1; }
         
-        /* MENU & SIDEBAR */
-        .menu-trigger { font-size: 30px; cursor: pointer; padding: 10px; color: var(--accent-color); }
+        #uhrzeit { font-size: 2.5rem; font-weight: bold; color: #B40404; font-family: monospace; }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
         .sidebar {
             position: fixed; top: 0; right: -300px; width: 280px; height: 100%;
             background: var(--header-bg); box-shadow: -2px 0 10px rgba(0,0,0,0.3);
-            transition: 0.3s; z-index: 1000; padding: 20px;
+            transition: 0.3s; z-index: 2000; padding: 20px;
         }
         .sidebar.open { right: 0; }
-        .sidebar h3 { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .theme-btn {
-            width: 100%; padding: 12px; margin: 5px 0; border: 1px solid var(--border-color);
-            background: var(--card-bg); color: var(--text-main); border-radius: 6px; cursor: pointer;
-        }
-        .theme-btn.active { border-color: #B40404; font-weight: bold; }
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1999; }
 
-        /* CONTENT */
+        .button-bar { display: flex; background: #222; padding: 10px 20px; gap: 15px; justify-content: center; }
+        .action-button { padding: 10px 25px; font-size: 16px; font-weight: bold; color: white; background: #5cb85c; border: none; border-radius: 6px; cursor: pointer; }
+
         .content-container { display: flex; flex-grow: 1; padding: 20px; gap: 20px; overflow: hidden; touch-action: pan-y; }
         .content-box { background: var(--card-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; flex: 1; overflow: hidden; }
         .highlight-row { background: rgba(255, 214, 0, 0.15) !important; border-left: 5px solid #FFD600; }
 
-        /* MOBILE NAVIGATION */
         .mobile-nav { display: none; height: 65px; background: var(--header-bg); border-top: 1px solid var(--border-color); justify-content: space-around; align-items: center; }
         .nav-item { flex: 1; text-align: center; color: #888; cursor: pointer; font-size: 0.9rem; }
         .nav-item.active { color: #B40404; font-weight: bold; }
@@ -80,10 +64,11 @@
         @media (max-width: 800px) {
             .header-container { height: 65px; }
             .header-left img { height: 45px; }
-            .header-right { display: none; }
+            #uhrzeit, .button-bar { display: none; }
             .mobile-nav { display: flex; }
             .content-box { display: none; }
             .active-tab { display: flex !important; }
+            .sidebar { width: 100%; right: -100%; }
         }
     </style>
 </head>
@@ -92,28 +77,35 @@
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     <div id="sidebar" class="sidebar">
         <h3>Einstellungen</h3>
-        <p>Design wählen:</p>
-        <button class="theme-btn" id="btn-light" onclick="setTheme('light')">☀️ Hell</button>
-        <button class="theme-btn" id="btn-dark" onclick="setTheme('dark')">🌙 Dunkel</button>
-        <button class="theme-btn" id="btn-system" onclick="setTheme('system')">🖥️ System</button>
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border-color);">
-        <button class="theme-btn" onclick="toggleMenu()">Schließen</button>
+        <button class="action-button" style="width:100%; margin-bottom:10px;" onclick="setTheme('light')">☀️ Hell</button>
+        <button class="action-button" style="width:100%; margin-bottom:10px; background:#444;" onclick="setTheme('dark')">🌙 Dunkel</button>
+        <button class="action-button blue" style="width:100%;" onclick="setTheme('system')">🖥️ System</button>
+        <hr>
+        <button class="action-button" style="background:#888; width:100%;" onclick="toggleMenu()">Schließen</button>
     </div>
 
     <div class="header-container">
-        <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" onclick="location.reload(true)"></div>
+        <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" onclick="manualRefresh()"></div>
         <div class="header-center">Löschgruppenführung Barkhausen</div>
-        <div class="menu-trigger" onclick="toggleMenu()">☰</div>
+        <div class="header-right-area">
+            <div id="uhrzeit">00:00</div>
+            <div style="font-size:30px; cursor:pointer;" onclick="toggleMenu()">☰</div>
+        </div>
+    </div>
+
+    <div class="button-bar">
+        <button class="action-button" onclick="window.open('...', '_blank')">📄 Einsatznachweis</button>
+        <button class="action-button" style="background:#012796" onclick="window.open('...', '_blank')">👥 Teilnehmerliste</button>
     </div>
 
     <div class="content-container" id="swipeArea">
         <div id="tab-news" class="content-box active-tab">
             <h2>📢 Aktuelles</h2>
-            <div id="news-container" style="overflow-y:auto;">Lade...</div>
+            <div id="news-container" style="overflow-y:auto;">Lade Daten...</div>
         </div>
         <div id="tab-dienst" class="content-box">
             <h2>📅 Dienstplan</h2>
-            <div id="dienst-container" style="overflow-y:auto;">Lade...</div>
+            <div id="dienst-container" style="overflow-y:auto;">Lade Daten...</div>
         </div>
     </div>
 
@@ -123,43 +115,43 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycby4cqLuPsVEGN_r0xSapBs_yM1syrGI45WkDBLLINPuwHiJcLZBal0_mdQMEQl9-OsG/exec";
+        const API_URL = "DEINE_API_URL";
 
-        // THEME LOGIC
-        function setTheme(theme) {
-            document.body.setAttribute('data-theme', theme);
-            localStorage.setItem('selected-theme', theme);
-            document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + theme).classList.add('active');
+        function updateTime() {
+            const jetzt = new Date();
+            const hh = String(jetzt.getHours()).padStart(2, '0');
+            const mm = String(jetzt.getMinutes()).padStart(2, '0');
+            document.getElementById("uhrzeit").innerHTML = `${hh}<span class="blink">:</span>${mm}`;
         }
+        setInterval(updateTime, 1000);
+
+        function setTheme(t) { document.body.setAttribute('data-theme', t); localStorage.setItem('theme', t); toggleMenu(); }
 
         function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').style.display = 
-                document.getElementById('sidebar').classList.contains('open') ? 'block' : 'none';
+            const s = document.getElementById('sidebar');
+            s.classList.toggle('open');
+            document.getElementById('overlay').style.display = s.classList.contains('open') ? 'block' : 'none';
         }
 
-        // NAVIGATION
+        async function manualRefresh() {
+            const img = document.querySelector('.header-left img');
+            img.style.animation = "pulse 0.8s infinite";
+            await loadData();
+            setTimeout(() => img.style.animation = "", 800);
+        }
+
         function showTab(tab) {
             document.getElementById('tab-news').classList.toggle('active-tab', tab === 'news');
             document.getElementById('tab-dienst').classList.toggle('active-tab', tab === 'dienst');
             document.getElementById('m-news').classList.toggle('active', tab === 'news');
             document.getElementById('m-dienst').classList.toggle('active', tab === 'dienst');
-            if(tab === 'dienst') {
-                setTimeout(() => {
-                    const next = document.getElementById('next-row');
-                    if(next) next.scrollIntoView({behavior: 'smooth', block: 'start'});
-                }, 150);
-            }
+            if(tab === 'dienst') setTimeout(scrollToNextService, 100);
         }
 
-        // SWIPE
-        let startX = 0;
-        document.getElementById('swipeArea').addEventListener('touchstart', e => startX = e.touches[0].clientX);
-        document.getElementById('swipeArea').addEventListener('touchend', e => {
-            let diff = startX - e.changedTouches[0].clientX;
-            if(Math.abs(diff) > 60) showTab(diff > 0 ? 'dienst' : 'news');
-        });
+        function scrollToNextService() {
+            const row = document.getElementById('next-row');
+            if(row) row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
 
         async function loadData() {
             try {
@@ -167,17 +159,14 @@
                 const data = await res.json();
                 renderNews(data.news);
                 renderDienst(data.dienste);
-            } catch (e) { console.error("API Fehler"); }
+            } catch (e) { console.log("Fehler beim Laden"); }
         }
 
         function renderNews(news) {
             document.getElementById('news-container').innerHTML = news.map(n => `
                 <div style="border-left:5px solid #5cb85c; padding:15px; background:var(--card-bg); margin-bottom:15px; border-radius:4px;">
-                    ${n.bild ? `<img src="${n.bild}" style="width:100%; border-radius:8px; margin-bottom:10px;">` : ''}
-                    <h3 style="margin:0;">${n.titel}</h3>
-                    <p>${n.inhalt}</p>
-                </div>
-            `).join('');
+                    <h3>${n.titel}</h3><p>${n.inhalt}</p>
+                </div>`).join('') + `<div style="font-size:0.7rem; color:#888; text-align:right">Update: ${new Date().toLocaleTimeString()}</div>`;
         }
 
         function renderDienst(dienste) {
@@ -188,26 +177,19 @@
                 let dObj = new Date(d.datum);
                 let isNext = (!nextId && dObj >= heute);
                 if(isNext) nextId = true;
-                let date = d.datum.includes('T') ? dObj.toLocaleDateString('de-DE') : d.datum;
                 html += `<tr ${isNext ? 'id="next-row" class="highlight-row"' : ''} style="border-bottom:1px solid var(--border-color);">
-                    <td style="padding:15px; text-align:center; border-right:1px solid var(--border-color);">
-                        <span style="color:#B40404; font-weight:bold;">${date}</span>
-                    </td>
-                    <td style="padding:15px;">
-                        <strong>${d.thema}</strong><br>
-                        <small>👕 ${d.kleidung} | 👤 ${d.leitung}</small>
-                    </td>
+                    <td style="padding:15px; font-weight:bold; color:#B40404;">${dObj.toLocaleDateString('de-DE')}</td>
+                    <td style="padding:15px;"><strong>${d.thema}</strong></td>
                 </tr>`;
             });
             document.getElementById('dienst-container').innerHTML = html + "</table>";
-            if(window.innerWidth > 800) showTab('news'); // Kiosk Modus Fix
         }
 
         window.onload = () => {
-            const savedTheme = localStorage.getItem('selected-theme') || 'system';
-            setTheme(savedTheme);
+            updateTime();
             loadData();
-            if(window.innerWidth <= 800) document.getElementById('tab-dienst').classList.remove('active-tab');
+            const saved = localStorage.getItem('theme') || 'system';
+            document.body.setAttribute('data-theme', saved);
         };
     </script>
 </body>
