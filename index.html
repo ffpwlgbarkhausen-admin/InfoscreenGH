@@ -29,77 +29,65 @@
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
 
-        /* BUTTON BAR (Kompakt unter Header) */
+        /* BUTTON BAR */
         .button-bar {
-            display: flex; background: #222; padding: 8px 20px; gap: 15px; 
+            display: flex; background: #222; padding: 10px 20px; gap: 15px; 
             justify-content: center; flex-shrink: 0;
         }
         .action-button {
-            padding: 10px 20px; font-size: 14px; font-weight: bold; color: white;
-            background-color: #012796; border: none; border-radius: 6px; cursor: pointer;
-            transition: background 0.2s;
+            padding: 10px 25px; font-size: 16px; font-weight: bold; color: white;
+            background-color: #5cb85c; border: none; border-radius: 6px; cursor: pointer;
         }
-        .action-button:hover { background-color: #001a66; }
-        .action-button.print { background-color: #5cb85c; }
-        .action-button.print:hover { background-color: #4cae4c; }
+        .action-button.blue { background-color: #012796; }
 
-        /* CONTENT AREA */
-        .content-container { display: flex; flex-grow: 1; padding: 15px; gap: 15px; overflow: hidden; }
+        /* CONTENT AREA (1/3 zu 2/3 Split) */
+        .content-container { 
+            display: flex; flex-grow: 1; padding: 20px; gap: 20px; overflow: hidden; 
+        }
         .content-box { 
-            background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            padding: 15px; display: flex; flex-direction: column; overflow: hidden;
+            background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            padding: 20px; display: flex; flex-direction: column; overflow: hidden;
         }
         .content-box h2 { 
-            color: #012796; text-align: center; margin: 0 0 10px 0; 
-            font-size: 1.4rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 5px;
+            color: #012796; text-align: center; margin: 0 0 15px 0; 
+            font-size: 1.6rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;
         }
 
-        /* NEWS (Links) */
-        .box-news { flex: 1.5; }
-        #news-container { overflow-y: auto; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
-        .news-card { border-left: 6px solid #5cb85c; padding: 12px; background: #fff; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .news-card.kat-dringend { border-left-color: #B40404; }
-        .news-card.kat-dienst { border-left-color: #012796; }
-        .news-card img { width: 100%; border-radius: 6px; margin-bottom: 8px; max-height: 250px; object-fit: cover; }
-        .news-card h3 { margin: 0 0 5px 0; font-size: 1.2rem; color: #012796; }
-        .news-card p { margin: 0; font-size: 1rem; color: #333; line-height: 1.4; }
-        
-        /* DIENSTPLAN (Rechts) */
-        .box-dienst { flex: 1; }
-        .dienst-table { width: 100%; border-collapse: collapse; }
-        .dienst-table td { padding: 10px; border-bottom: 1px solid #eee; vertical-align: top; }
-        .d-date { color: #B40404; font-weight: bold; font-size: 0.95rem; white-space: nowrap; line-height: 1.2; }
-        .badge-w { background: #012796; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-        .d-info { font-size: 0.85rem; color: #666; margin-top: 4px; display: block; }
+        .box-news { flex: 1; } /* 1 Teil Breite */
+        .box-dienst { flex: 2; } /* 2 Teile Breite */
 
-        /* MOBILE NAV */
+        /* NEWS STYLING */
+        #news-container { overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .news-card { border-left: 6px solid #5cb85c; padding: 15px; background: #fff; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .news-card.kat-dringend { border-left-color: #B40404; }
+        .news-card img { width: 100%; border-radius: 6px; margin-bottom: 10px; max-height: 200px; object-fit: cover; }
+        .news-card h3 { margin: 0 0 5px 0; font-size: 1.2rem; color: #012796; }
+
+        /* DIENSTPLAN STYLING */
+        #dienst-container { overflow-y: auto; flex-grow: 1; }
+        .dienst-table { width: 100%; border-collapse: collapse; }
+        .dienst-table tr { border-bottom: 1px solid #eee; }
+        .highlight-row { background-color: rgba(255, 235, 59, 0.15); border-left: 6px solid #FFD600; }
+        .badge-w { background: #012796; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
+
+        /* MOBILE NAVIGATION */
         #mobile-nav { display: none; }
 
-        @media (max-width: 768px) {
-            .header-container { height: auto; flex-direction: column; padding: 10px; }
-            .header-center { font-size: 1.2rem; margin: 10px 0; }
+        @media (max-width: 1024px) {
+            .content-container { flex-direction: column; overflow-y: auto; }
             .button-bar { display: none; }
-            .content-container { flex-direction: column; overflow-y: auto; padding-bottom: 80px; }
-            .box-dienst { display: none; } /* Standardansicht News auf Handy */
             #mobile-nav { 
-                display: flex; position: fixed; bottom: 0; width: 100%; height: 70px; 
-                background: white; border-top: 2px solid #e0e0e0; z-index: 1000;
+                display: flex; position: fixed; bottom: 0; width: 100%; height: 60px; 
+                background: white; border-top: 1px solid #ccc; z-index: 100;
             }
-            #mobile-nav button { flex: 1; border: none; background: none; font-weight: bold; color: #012796; font-size: 1.1rem; }
+            #mobile-nav button { flex: 1; border: none; background: none; font-weight: bold; font-size: 1rem; color: #012796; }
         }
-
-        .highlight-row {
-    background-color: rgba(255, 235, 59, 0.2); /* Zartes Gelb */
-    border-left: 5px solid #FFD600; /* Gelber Balken am Rand */
-}
     </style>
 </head>
 <body>
 
     <div class="header-container">
-        <div class="header-left">
-            <img src="Logo-redesign-LG13-removebg-preview.png" alt="Logo">
-        </div>
+        <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" alt="Logo"></div>
         <div class="header-center">Löschgruppenführung Barkhausen</div>
         <div class="header-right">
             <div id="uhrzeit">00:00<span class="uhr-sekunden">:00</span></div>
@@ -107,19 +95,18 @@
     </div>
 
     <div class="button-bar">
-        <button class="action-button print" onclick="window.open('https://docs.google.com/spreadsheets/d/14beu0gUJXNM6OLCKKCS5m4r5c8Kb42qONXgWq2dkFwU/export?format=pdf&gid=0&size=A4&portrait=true&scale=2&top_margin=0.2&bottom_margin=0&left_margin=0.2&right_margin=0.2&attachment=false', '_blank')">📄 Einsatznachweis</button>
-        <button class="action-button print" onclick="window.open('https://docs.google.com/document/d/1gzdmqM2g4sl59nHyqAl_HE86x9-gcWHC_LbO_7iYW-s/export?format=pdf', '_blank')">👥 Teilnehmerliste</button>
+        <button class="action-button" onclick="window.open('https://docs.google.com/spreadsheets/d/14beu0gUJXNM6OLCKKCS5m4r5c8Kb42qONXgWq2dkFwU/export?format=pdf&gid=0&size=A4&portrait=true&scale=2&top_margin=0.2&bottom_margin=0&left_margin=0.2&right_margin=0.2&attachment=false', '_blank')">📄 Einsatznachweis</button>
+        <button class="action-button blue" onclick="window.open('https://docs.google.com/document/d/1gzdmqM2g4sl59nHyqAl_HE86x9-gcWHC_LbO_7iYW-s/export?format=pdf', '_blank')">👥 Teilnehmerliste</button>
     </div>
 
     <div class="content-container">
         <div class="content-box box-news">
             <h2>📢 Aktuelles</h2>
-            <div id="news-container">Daten werden geladen...</div>
+            <div id="news-container">Lade News...</div>
         </div>
-
         <div class="content-box box-dienst">
-            <h2>📅 Nächste Dienste</h2>
-            <div id="dienst-container">Plan wird geladen...</div>
+            <h2>📅 Dienstplan</h2>
+            <div id="dienst-container">Lade Dienstplan...</div>
         </div>
     </div>
 
@@ -129,126 +116,90 @@
     </div>
 
     <script>
-        // HIER DEINE APPS SCRIPT URL EINTRAGEN
         const API_URL = "https://script.google.com/macros/s/AKfycby4cqLuPsVEGN_r0xSapBs_yM1syrGI45WkDBLLINPuwHiJcLZBal0_mdQMEQl9-OsG/exec";
         
-        let hasReloadedToday = false;
-
-        // 1. UHRZEIT & AUTO-REFRESH
         function updateTime() {
             const jetzt = new Date();
             const hh = String(jetzt.getHours()).padStart(2, '0');
             const mm = String(jetzt.getMinutes()).padStart(2, '0');
             const ss = String(jetzt.getSeconds()).padStart(2, '0');
-            
             document.getElementById("uhrzeit").innerHTML = `${hh}<span class="blink">:</span>${mm}<span class="uhr-sekunden">:${ss}</span>`;
             
-            // Nacht-Refresh um 03:00 Uhr
-            if (hh === "03" && mm === "00" && !hasReloadedToday) {
-                hasReloadedToday = true;
-                location.reload();
-            }
-            if (hh !== "03") hasReloadedToday = false;
+            if (hh === "03" && mm === "00") location.reload(); 
         }
         setInterval(updateTime, 1000);
 
-        // 2. DATEN LADEN
         async function loadData() {
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
                 renderNews(data.news);
                 renderDienst(data.dienste);
-            } catch (e) {
-                console.error("Fehler beim Abrufen der Daten:", e);
-            }
+            } catch (e) { console.error("Fehler beim Laden der Daten"); }
         }
 
         function renderNews(news) {
             const container = document.getElementById('news-container');
-            if (!news || news.length === 0) {
-                container.innerHTML = "<p>Keine aktuellen News.</p>";
-                return;
-            }
             container.innerHTML = news.map(n => `
                 <div class="news-card kat-${n.kat.toLowerCase()}">
-                    ${n.bild ? `<img src="${n.bild}" alt="News Bild">` : ''}
+                    ${n.bild ? `<img src="${n.bild}">` : ''}
                     <h3>${n.titel}</h3>
                     <p>${n.inhalt}</p>
                 </div>
-            `).join('') + `<div style="font-size:0.7rem; color:#aaa; text-align:right; margin-top:10px;">Update: ${new Date().toLocaleTimeString()}</div>`;
+            `).join('') + `<div style="font-size:0.7rem; color:#aaa; text-align:right;">Update: ${new Date().toLocaleTimeString()}</div>`;
         }
 
         function renderDienst(dienste) {
-    const container = document.getElementById('dienst-container');
-    if (!dienste || dienste.length === 0) {
-        container.innerHTML = "<p>Keine Dienste geplant.</p>";
-        return;
-    }
+            const container = document.getElementById('dienst-container');
+            const heute = new Date();
+            heute.setHours(0, 0, 0, 0);
+            let nextFound = false;
 
-    const heute = new Date();
-    heute.setHours(0, 0, 0, 0);
-    let nextServiceFound = false;
+            container.innerHTML = `<table class="dienst-table">` + 
+                dienste.map(d => {
+                    let dObj = new Date(d.datum);
+                    let isNext = false;
+                    if (!nextFound && dObj >= heute) { isNext = true; nextFound = true; }
 
-    container.innerHTML = `<table class="dienst-table" style="width:100%;">` + 
-        dienste.map(d => {
-            const dienstDatum = new Date(d.datum);
-            let isNext = false;
+                    // Uhrzeit-Fix für ISO-Strings
+                    let displayTime = d.uhrzeit;
+                    if (d.uhrzeit.includes('T')) {
+                        displayTime = d.uhrzeit.split('T')[1].substring(0, 5);
+                    }
 
-            // Markiere den ersten Dienst, der heute oder in der Zukunft liegt
-            if (!nextServiceFound && dienstDatum >= heute) {
-                isNext = true;
-                nextServiceFound = true;
-            }
+                    let displayDate = d.datum;
+                    if (d.datum.includes('T')) {
+                        displayDate = dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit'}) + ".";
+                    }
 
-            let displayDate = d.datum.includes('T') ? 
-                new Date(d.datum).toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit'}) + "." : d.datum;
-            
-            // Wir fügen dem nächsten Dienst die ID 'next-service' und eine Klasse 'highlight' hinzu
-            return `
-            <tr ${isNext ? 'id="next-service" class="highlight-row"' : ''}>
-                <td style="width: 90px; text-align: center; border-right: 2px solid #eee; padding: 15px 5px;">
-                    <span class="d-date-big" style="font-size: 1.5rem; color: #B40404; font-weight: bold;">${displayDate}</span><br>
-                    <small style="font-weight: bold; color: #555;">${d.uhrzeit} Uhr</small>
-                </td>
-                <td style="padding-left: 20px;">
-                    <span style="font-size: 1.2rem; font-weight: 700; color: #000; display: block; margin-bottom: 4px;">${d.thema}</span>
-                    <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                        <span class="badge-w" style="background: #012796; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">👕 Kleidung: ${d.kleidung}</span>
-                        <span style="font-size: 0.95rem; color: #444;">👤 Leitung: ${d.leitung}</span>
-                    </div>
-                </td>
-            </tr>`;
-        }).join('') + `</table>`;
+                    return `
+                    <tr ${isNext ? 'id="next-service" class="highlight-row"' : ''}>
+                        <td style="width: 100px; text-align: center; border-right: 3px solid #eee; padding: 15px 5px;">
+                            <span style="font-size: 1.6rem; color: #B40404; font-weight: bold;">${displayDate}</span><br>
+                            <span style="font-size: 1.1rem; font-weight: bold; color: #444;">${displayTime} Uhr</span>
+                        </td>
+                        <td style="padding-left: 25px;">
+                            <span style="font-size: 1.4rem; font-weight: 700; color: #000; display: block; margin-bottom: 5px;">${d.thema}</span>
+                            <div style="display: flex; gap: 20px; align-items: center;">
+                                <span class="badge-w">👕 ${d.kleidung}</span>
+                                <span style="font-size: 1.1rem; color: #555;">👤 ${d.leitung}</span>
+                            </div>
+                        </td>
+                    </tr>`;
+                }).join('') + `</table>`;
 
-    // Nach dem Rendern zum nächsten Dienst scrollen
-    setTimeout(() => {
-        const nextElem = document.getElementById('next-service');
-        if (nextElem) {
-            nextElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => {
+                const nextElem = document.getElementById('next-service');
+                if (nextElem) nextElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 800);
         }
-    }, 500); // Kurze Verzögerung, damit die Tabelle fertig aufgebaut ist
-}
 
-        // 3. MOBILE NAVIGATION LOGIK
         function switchTab(tab) {
-            const boxNews = document.querySelector('.box-news');
-            const boxDienst = document.querySelector('.box-dienst');
-            if (tab === 'news') {
-                boxNews.style.display = 'flex';
-                boxDienst.style.display = 'none';
-            } else {
-                boxNews.style.display = 'none';
-                boxDienst.style.display = 'flex';
-            }
+            document.querySelector('.box-news').style.display = (tab === 'news') ? 'flex' : 'none';
+            document.querySelector('.box-dienst').style.display = (tab === 'dienst') ? 'flex' : 'none';
         }
 
-        // INITIALISIERUNG
-        window.onload = () => {
-            updateTime();
-            loadData();
-            setInterval(loadData, 300000); // Alle 5 Minuten aktualisieren
-        };
+        window.onload = () => { updateTime(); loadData(); setInterval(loadData, 300000); };
     </script>
 </body>
 </html>
