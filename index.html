@@ -8,20 +8,44 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
         
+        :root {
+            --bg-color: #f4f4f4;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --header-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        /* Darkmode Automatik */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121212;
+                --card-bg: #1e1e1e;
+                --text-main: #e0e0e0;
+                --header-bg: #1e1e1e;
+                --border-color: #333333;
+            }
+            body { color: var(--text-main); }
+            .content-box h2 { border-bottom-color: #444 !important; }
+            tr { border-bottom-color: #333 !important; }
+            .d-date-cell { border-right-color: #333 !important; }
+        }
+
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             font-family: 'Montserrat', sans-serif;
-            background-color: #f4f4f4; display: flex; flex-direction: column;
+            background-color: var(--bg-color); display: flex; flex-direction: column;
             overflow: hidden; user-select: none;
         }
 
         /* HEADER */
         .header-container {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 20px; background: white; border-bottom: 2px solid #e0e0e0;
+            padding: 10px 20px; background: var(--header-bg); border-bottom: 2px solid var(--border-color);
             height: 90px; flex-shrink: 0; z-index: 10;
         }
-        .header-left img { height: 75px; width: auto; cursor: pointer; }
+        .header-left img { height: 75px; width: auto; cursor: pointer; transition: transform 0.2s; }
+        .header-left img:active { transform: scale(0.9); opacity: 0.7; }
         .header-center { font-size: 22px; color: #B40404; font-weight: bold; text-align: center; flex-grow: 1; }
         .header-right { text-align: right; min-width: 200px; }
         #uhrzeit { font-size: 2.8rem; font-weight: bold; color: #B40404; line-height: 1; font-family: monospace; }
@@ -46,7 +70,7 @@
             touch-action: pan-y;
         }
         .content-box { 
-            background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
             padding: 20px; display: flex; flex-direction: column; overflow: hidden; flex: 1;
         }
         .content-box h2 { 
@@ -54,24 +78,24 @@
             font-size: 1.6rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;
         }
 
+        /* NEWS & DIENST */
+        .news-card { border-left: 5px solid #5cb85c; padding: 15px; background: var(--card-bg); margin-bottom: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .dienst-table { width: 100%; border-collapse: collapse; color: var(--text-main); }
+        .highlight-row { background: rgba(255, 214, 0, 0.15) !important; border-left: 5px solid #FFD600; }
+
         /* MOBILE NAV */
         .mobile-nav {
-            display: none; height: 65px; background: white; border-top: 2px solid #e0e0e0;
+            display: none; height: 65px; background: var(--header-bg); border-top: 2px solid var(--border-color);
             justify-content: space-around; align-items: center; flex-shrink: 0;
         }
-        .nav-item {
-            flex: 1; text-align: center; color: #888; font-weight: bold; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; font-size: 0.9rem;
-        }
+        .nav-item { flex: 1; text-align: center; color: #888; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; }
         .nav-item.active { color: #B40404; }
 
-        /* RESPONSIVE DESIGN */
         @media (max-width: 800px) {
-            .header-container { height: 60px; padding: 5px 15px; }
-            .header-left img { height: 45px; }
+            .header-container { height: 65px; padding: 5px 15px; }
+            .header-left img { height: 48px; }
             .header-center { font-size: 15px; }
-            .header-right { display: none; } /* Uhr/Datum weg auf Mobile */
-            .button-bar { display: none; } 
+            .header-right, .button-bar { display: none; }
             .mobile-nav { display: flex; }
             .content-container { padding: 10px; gap: 0; }
             .content-box { display: none; } 
@@ -82,7 +106,9 @@
 <body>
 
     <div class="header-container">
-        <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" alt="Logo" onclick="manualRefresh()"></div>
+        <div class="header-left">
+            <img src="Logo-redesign-LG13-removebg-preview.png" alt="Logo" onclick="manualRefresh()">
+        </div>
         <div class="header-center">Löschgruppenführung Barkhausen</div>
         <div class="header-right">
             <div id="uhrzeit">00:00<span class="uhr-sekunden">:00</span></div>
@@ -97,39 +123,50 @@
     <div class="content-container" id="swipeArea">
         <div id="tab-news" class="content-box active-tab">
             <h2>📢 Aktuelles</h2>
-            <div id="news-container" style="overflow-y:auto;">Lade News...</div>
+            <div id="news-container" style="overflow-y:auto;">Lade...</div>
         </div>
         <div id="tab-dienst" class="content-box">
             <h2>📅 Dienstplan</h2>
-            <div id="dienst-container" style="overflow-y:auto;">Lade Dienstplan...</div>
+            <div id="dienst-container" style="overflow-y:auto;">Lade...</div>
         </div>
     </div>
 
     <div class="mobile-nav">
-        <div class="nav-item active" id="btn-news" onclick="showTab('news')">
-            <span style="font-size:1.2rem;">📢</span> Aktuelles
-        </div>
-        <div class="nav-item" id="btn-dienst" onclick="showTab('dienst')">
-            <span style="font-size:1.2rem;">📅</span> Dienstplan
-        </div>
+        <div class="nav-item active" id="btn-news" onclick="showTab('news')"><span>📢</span><span>Aktuelles</span></div>
+        <div class="nav-item" id="btn-dienst" onclick="showTab('dienst')"><span>📅</span><span>Dienstplan</span></div>
     </div>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycby4cqLuPsVEGN_r0xSapBs_yM1syrGI45WkDBLLINPuwHiJcLZBal0_mdQMEQl9-OsG/exec";
         
+        function manualRefresh() {
+            location.reload(true); // Erzwingt Neuladen der gesamten Seite
+        }
+
+        function scrollToNextService() {
+            const nextRow = document.getElementById('next-row');
+            if (nextRow) {
+                // Kurze Verzögerung, damit das Rendering abgeschlossen ist (wichtig bei Tab-Wechsel)
+                setTimeout(() => {
+                    nextRow.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+
         function showTab(tab) {
             if (window.innerWidth > 800) return;
             document.getElementById('tab-news').classList.toggle('active-tab', tab === 'news');
             document.getElementById('tab-dienst').classList.toggle('active-tab', tab === 'dienst');
             document.getElementById('btn-news').classList.toggle('active', tab === 'news');
             document.getElementById('btn-dienst').classList.toggle('active', tab === 'dienst');
+            
+            if (tab === 'dienst') scrollToNextService();
         }
 
-        // Swipe
+        // Swipe Handling
         let touchStartX = 0;
-        const sArea = document.getElementById('swipeArea');
-        sArea.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
-        sArea.addEventListener('touchend', e => {
+        document.getElementById('swipeArea').addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+        document.getElementById('swipeArea').addEventListener('touchend', e => {
             let touchEndX = e.changedTouches[0].screenX;
             if (touchStartX - touchEndX > 60) showTab('dienst');
             if (touchEndX - touchStartX > 60) showTab('news');
@@ -142,20 +179,18 @@
         }
         setInterval(updateTime, 1000);
 
-        async function manualRefresh() { location.reload(); }
-
         async function loadData() {
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
                 renderNews(data.news);
                 renderDienst(data.dienste);
-            } catch (e) { console.error("Fehler"); }
+            } catch (e) { console.error("Datenfehler"); }
         }
 
         function renderNews(news) {
             document.getElementById('news-container').innerHTML = news.map(n => `
-                <div style="border-left:5px solid #5cb85c; padding:15px; background:#fff; margin-bottom:15px; border-radius:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div class="news-card">
                     ${n.bild ? `<img src="${n.bild}" style="width:100%; border-radius:8px; margin-bottom:10px;">` : ''}
                     <h3 style="margin:0 0 5px 0; color:#012796;">${n.titel}</h3>
                     <p style="margin:0; font-size:1.1rem; line-height:1.4;">${n.inhalt}</p>
@@ -166,36 +201,38 @@
         function renderDienst(dienste) {
             const container = document.getElementById('dienst-container');
             const heute = new Date(); heute.setHours(0,0,0,0);
-            let nextId = "";
-            let html = `<table style="width:100%; border-collapse:collapse;">`;
+            let nextIdFound = false;
+            let html = `<table class="dienst-table">`;
+            
             dienste.forEach(d => {
                 let dObj = new Date(d.datum);
-                let isNext = (nextId === "" && dObj >= heute);
-                if (isNext) nextId = "next-row";
+                let isNext = (!nextIdFound && dObj >= heute);
+                if (isNext) nextIdFound = true;
+
                 let time = d.uhrzeit.includes('T') ? d.uhrzeit.split('T')[1].substring(0, 5) : d.uhrzeit;
                 let date = d.datum.includes('T') ? dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'}) : d.datum;
 
-                html += `<tr ${isNext ? 'id="next-row" style="background:rgba(255,235,59,0.15); border-left:5px solid #FFD600;"' : ''} style="border-bottom:1px solid #eee;">
-                    <td style="width:85px; text-align:center; padding:15px 5px; border-right:2px solid #eee;">
+                html += `<tr ${isNext ? 'id="next-row" class="highlight-row"' : ''} style="border-bottom:1px solid var(--border-color);">
+                    <td style="width:85px; text-align:center; padding:15px 5px; border-right:2px solid var(--border-color);">
                         <span style="color:#B40404; font-weight:bold; font-size:1.1rem;">${date}</span><br>
-                        <small>${time} Uhr</small>
+                        <small style="color:var(--text-main);">${time} Uhr</small>
                     </td>
                     <td style="padding:10px 15px;">
-                        <strong style="font-size:1.1rem;">${d.thema}</strong><br>
-                        <span style="background:#012796; color:white; padding:2px 6px; border-radius:4px; font-size:0.8rem;">👕 ${d.kleidung}</span> <small>👤 ${d.leitung}</small>
+                        <strong style="font-size:1.1rem; color:var(--text-main);">${d.thema}</strong><br>
+                        <span style="background:#012796; color:white; padding:2px 6px; border-radius:4px; font-size:0.8rem;">👕 ${d.kleidung}</span> <small style="color:#888;">👤 ${d.leitung}</small>
                     </td>
                 </tr>`;
             });
             container.innerHTML = html + `</table>`;
-            if(nextId && window.innerWidth > 800) setTimeout(() => document.getElementById(nextId).scrollIntoView({behavior:'smooth', block:'start'}), 500);
+            
+            // Auto-Scroll im Kiosk Modus (Desktop)
+            if (window.innerWidth > 800) scrollToNextService();
         }
 
         window.onload = () => { 
             updateTime(); 
             loadData(); 
-            if (window.innerWidth <= 800) {
-                document.getElementById('tab-dienst').classList.remove('active-tab');
-            }
+            if (window.innerWidth <= 800) document.getElementById('tab-dienst').classList.remove('active-tab');
         };
     </script>
 </body>
