@@ -16,12 +16,6 @@
             --bg-color: #121212; --card-bg: #1e1e1e; --text-main: #e0e0e0; --header-bg: #1e1e1e; --border-color: #333;
         }
 
-        @media (prefers-color-scheme: dark) {
-            [data-theme="system"] {
-                --bg-color: #121212; --card-bg: #1e1e1e; --text-main: #e0e0e0; --header-bg: #1e1e1e; --border-color: #333;
-            }
-        }
-
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             font-family: 'Montserrat', sans-serif;
@@ -29,128 +23,153 @@
             display: flex; flex-direction: column; overflow: hidden;
         }
 
+        /* HEADER FIX */
         .header-container {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 20px; background: var(--header-bg); border-bottom: 2px solid var(--border-color);
+            padding: 0 20px; background: var(--header-bg); border-bottom: 2px solid var(--border-color);
             height: 90px; flex-shrink: 0; z-index: 100;
         }
+        .header-left { flex: 0 0 150px; }
         .header-left img { height: 70px; cursor: pointer; }
-        .header-center { font-size: 20px; color: #B40404; font-weight: bold; text-align: center; flex-grow: 1; }
         
-        #uhrzeit { font-size: 2.5rem; font-weight: bold; color: #B40404; font-family: monospace; }
-        .blink { animation: blinker 1s linear infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .header-center { 
+            flex: 1; text-align: center; color: #B40404; font-weight: bold; font-size: 22px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
 
+        .header-right { 
+            flex: 0 0 220px; display: flex; align-items: center; justify-content: flex-end; gap: 15px;
+        }
+
+        #uhr-display { text-align: right; line-height: 1.1; }
+        #uhrzeit { font-size: 2.2rem; font-weight: bold; color: #B40404; font-family: monospace; }
+        #datum { font-size: 0.9rem; color: #888; font-weight: bold; display: block; }
+        
+        .menu-trigger { font-size: 32px; cursor: pointer; color: var(--accent-color); user-select: none; }
+
+        /* SIDEBAR */
         .sidebar {
-            position: fixed; top: 0; right: -300px; width: 280px; height: 100%;
-            background: var(--header-bg); box-shadow: -2px 0 10px rgba(0,0,0,0.3);
-            transition: 0.3s; z-index: 2000; padding: 20px;
+            position: fixed; top: 0; right: -310px; width: 280px; height: 100%;
+            background: var(--header-bg); box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transition: 0.3s ease-in-out; z-index: 3000; padding: 25px;
         }
         .sidebar.open { right: 0; }
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1999; }
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2500; }
 
-        .button-bar { display: flex; background: #222; padding: 10px 20px; gap: 15px; justify-content: center; }
-        .action-button { padding: 10px 25px; font-size: 16px; font-weight: bold; color: white; background: #5cb85c; border: none; border-radius: 6px; cursor: pointer; }
-
-        .content-container { display: flex; flex-grow: 1; padding: 20px; gap: 20px; overflow: hidden; touch-action: pan-y; }
-        .content-box { background: var(--card-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-        .highlight-row { background: rgba(255, 214, 0, 0.15) !important; border-left: 5px solid #FFD600; }
-
-        .mobile-nav { display: none; height: 65px; background: var(--header-bg); border-top: 1px solid var(--border-color); justify-content: space-around; align-items: center; }
-        .nav-item { flex: 1; text-align: center; color: #888; cursor: pointer; font-size: 0.9rem; }
-        .nav-item.active { color: #B40404; font-weight: bold; }
+        /* CONTENT & MOBILE */
+        .content-container { display: flex; flex-grow: 1; padding: 20px; gap: 20px; overflow: hidden; }
+        .content-box { background: var(--card-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; flex: 1; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        
+        .mobile-nav { display: none; height: 70px; background: var(--header-bg); border-top: 2px solid var(--border-color); justify-content: space-around; align-items: center; }
+        .nav-item { flex: 1; text-align: center; color: #888; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
+        .nav-item.active { color: #B40404; }
 
         @media (max-width: 800px) {
-            .header-container { height: 65px; }
+            .header-container { height: 70px; padding: 0 10px; }
+            .header-left { flex: 0 0 60px; }
             .header-left img { height: 45px; }
-            #uhrzeit, .button-bar { display: none; }
+            .header-center { font-size: 15px; }
+            .header-right { flex: 0 0 50px; }
+            #uhr-display { display: none; } /* Zeit im Header auf Mobile weg */
             .mobile-nav { display: flex; }
             .content-box { display: none; }
             .active-tab { display: flex !important; }
-            .sidebar { width: 100%; right: -100%; }
+            .sidebar { width: 80%; right: -85%; }
         }
+
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
     </style>
 </head>
 <body data-theme="system">
 
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     <div id="sidebar" class="sidebar">
-        <h3>Einstellungen</h3>
-        <button class="action-button" style="width:100%; margin-bottom:10px;" onclick="setTheme('light')">☀️ Hell</button>
-        <button class="action-button" style="width:100%; margin-bottom:10px; background:#444;" onclick="setTheme('dark')">🌙 Dunkel</button>
-        <button class="action-button blue" style="width:100%;" onclick="setTheme('system')">🖥️ System</button>
-        <hr>
-        <button class="action-button" style="background:#888; width:100%;" onclick="toggleMenu()">Schließen</button>
+        <h2 style="margin-top:0">Einstellungen</h2>
+        <p>Design:</p>
+        <button onclick="setTheme('light')" style="width:100%; padding:10px; margin-bottom:10px; cursor:pointer">☀️ Hell</button>
+        <button onclick="setTheme('dark')" style="width:100%; padding:10px; margin-bottom:10px; cursor:pointer">🌙 Dunkel</button>
+        <button onclick="setTheme('system')" style="width:100%; padding:10px; margin-bottom:20px; cursor:pointer">🖥️ System</button>
+        <button onclick="toggleMenu()" style="width:100%; padding:10px; background:#888; color:white; border:none; border-radius:4px; cursor:pointer">Schließen</button>
     </div>
 
     <div class="header-container">
-        <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" onclick="manualRefresh()"></div>
-        <div class="header-center">Löschgruppenführung Barkhausen</div>
-        <div class="header-right-area">
-            <div id="uhrzeit">00:00</div>
-            <div style="font-size:30px; cursor:pointer;" onclick="toggleMenu()">☰</div>
+        <div class="header-left">
+            <img src="Logo-redesign-LG13-removebg-preview.png" onclick="manualRefresh()">
         </div>
-    </div>
-
-    <div class="button-bar">
-        <button class="action-button" onclick="window.open('...', '_blank')">📄 Einsatznachweis</button>
-        <button class="action-button" style="background:#012796" onclick="window.open('...', '_blank')">👥 Teilnehmerliste</button>
+        <div class="header-center">Löschgruppenführung Barkhausen</div>
+        <div class="header-right">
+            <div id="uhr-display">
+                <span id="datum">00.00.0000</span>
+                <span id="uhrzeit">00:00</span>
+            </div>
+            <div class="menu-trigger" onclick="toggleMenu()">☰</div>
+        </div>
     </div>
 
     <div class="content-container" id="swipeArea">
         <div id="tab-news" class="content-box active-tab">
-            <h2>📢 Aktuelles</h2>
-            <div id="news-container" style="overflow-y:auto;">Lade Daten...</div>
+            <h2 style="text-align:center; color:var(--accent-color); border-bottom:2px solid #eee; padding-bottom:10px">📢 Aktuelles</h2>
+            <div id="news-container" style="overflow-y:auto; flex-grow:1">Lade Daten...</div>
         </div>
         <div id="tab-dienst" class="content-box">
-            <h2>📅 Dienstplan</h2>
-            <div id="dienst-container" style="overflow-y:auto;">Lade Daten...</div>
+            <h2 style="text-align:center; color:var(--accent-color); border-bottom:2px solid #eee; padding-bottom:10px">📅 Dienstplan</h2>
+            <div id="dienst-container" style="overflow-y:auto; flex-grow:1">Lade Daten...</div>
         </div>
     </div>
 
     <div class="mobile-nav">
-        <div class="nav-item active" id="m-news" onclick="showTab('news')">📢 News</div>
+        <div class="nav-item active" id="m-news" onclick="showTab('news')">📢 Aktuelles</div>
         <div id="m-dienst" class="nav-item" onclick="showTab('dienst')">📅 Dienstplan</div>
     </div>
 
     <script>
-        const API_URL = "DEINE_API_URL";
+        const API_URL = "DEINE_SCRIPT_URL_HIER";
 
         function updateTime() {
             const jetzt = new Date();
             const hh = String(jetzt.getHours()).padStart(2, '0');
             const mm = String(jetzt.getMinutes()).padStart(2, '0');
+            const dd = String(jetzt.getDate()).padStart(2, '0');
+            const mo = String(jetzt.getMonth() + 1).padStart(2, '0');
+            const jj = jetzt.getFullYear();
+            
             document.getElementById("uhrzeit").innerHTML = `${hh}<span class="blink">:</span>${mm}`;
+            document.getElementById("datum").innerHTML = `${dd}.${mo}.${jj}`;
         }
         setInterval(updateTime, 1000);
 
-        function setTheme(t) { document.body.setAttribute('data-theme', t); localStorage.setItem('theme', t); toggleMenu(); }
+        function setTheme(t) {
+            document.body.setAttribute('data-theme', t);
+            localStorage.setItem('theme-pref', t);
+            toggleMenu();
+        }
 
         function toggleMenu() {
             const s = document.getElementById('sidebar');
+            const o = document.getElementById('overlay');
+            const isOpen = s.classList.contains('open');
             s.classList.toggle('open');
-            document.getElementById('overlay').style.display = s.classList.contains('open') ? 'block' : 'none';
-        }
-
-        async function manualRefresh() {
-            const img = document.querySelector('.header-left img');
-            img.style.animation = "pulse 0.8s infinite";
-            await loadData();
-            setTimeout(() => img.style.animation = "", 800);
+            o.style.display = isOpen ? 'none' : 'block';
         }
 
         function showTab(tab) {
+            if(window.innerWidth > 800) return;
             document.getElementById('tab-news').classList.toggle('active-tab', tab === 'news');
             document.getElementById('tab-dienst').classList.toggle('active-tab', tab === 'dienst');
             document.getElementById('m-news').classList.toggle('active', tab === 'news');
             document.getElementById('m-dienst').classList.toggle('active', tab === 'dienst');
-            if(tab === 'dienst') setTimeout(scrollToNextService, 100);
+            if(tab === 'dienst') setTimeout(() => {
+                const next = document.getElementById('next-row');
+                if(next) next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
 
-        function scrollToNextService() {
-            const row = document.getElementById('next-row');
-            if(row) row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        async function manualRefresh() {
+            const img = document.querySelector('.header-left img');
+            img.style.opacity = "0.5";
+            await loadData();
+            img.style.opacity = "1";
         }
 
         async function loadData() {
@@ -159,27 +178,29 @@
                 const data = await res.json();
                 renderNews(data.news);
                 renderDienst(data.dienste);
-            } catch (e) { console.log("Fehler beim Laden"); }
+            } catch (e) { console.error("API Fehler"); }
         }
 
         function renderNews(news) {
             document.getElementById('news-container').innerHTML = news.map(n => `
-                <div style="border-left:5px solid #5cb85c; padding:15px; background:var(--card-bg); margin-bottom:15px; border-radius:4px;">
-                    <h3>${n.titel}</h3><p>${n.inhalt}</p>
-                </div>`).join('') + `<div style="font-size:0.7rem; color:#888; text-align:right">Update: ${new Date().toLocaleTimeString()}</div>`;
+                <div style="border-left:5px solid #5cb85c; padding:15px; background:var(--card-bg); margin-bottom:15px; border-radius:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <h3 style="margin:0 0 5px 0">${n.titel}</h3>
+                    <p style="margin:0">${n.inhalt}</p>
+                </div>
+            `).join('') + `<div style="font-size:0.7rem; color:#888; text-align:right">Stand: ${new Date().toLocaleTimeString()}</div>`;
         }
 
         function renderDienst(dienste) {
             const heute = new Date(); heute.setHours(0,0,0,0);
-            let nextId = false;
+            let nextFound = false;
             let html = `<table style="width:100%; border-collapse:collapse;">`;
             dienste.forEach(d => {
-                let dObj = new Date(d.datum);
-                let isNext = (!nextId && dObj >= heute);
-                if(isNext) nextId = true;
-                html += `<tr ${isNext ? 'id="next-row" class="highlight-row"' : ''} style="border-bottom:1px solid var(--border-color);">
-                    <td style="padding:15px; font-weight:bold; color:#B40404;">${dObj.toLocaleDateString('de-DE')}</td>
-                    <td style="padding:15px;"><strong>${d.thema}</strong></td>
+                const dObj = new Date(d.datum);
+                const isNext = (!nextFound && dObj >= heute);
+                if(isNext) nextFound = true;
+                html += `<tr ${isNext ? 'id="next-row" style="background:rgba(255,214,0,0.1); border-left:5px solid #FFD600"' : ''} style="border-bottom:1px solid var(--border-color)">
+                    <td style="padding:15px; font-weight:bold; color:#B40404">${dObj.toLocaleDateString('de-DE')}</td>
+                    <td style="padding:15px"><strong>${d.thema}</strong><br><small>${d.uhrzeit} | ${d.leitung}</small></td>
                 </tr>`;
             });
             document.getElementById('dienst-container').innerHTML = html + "</table>";
@@ -188,7 +209,7 @@
         window.onload = () => {
             updateTime();
             loadData();
-            const saved = localStorage.getItem('theme') || 'system';
+            const saved = localStorage.getItem('theme-pref') || 'system';
             document.body.setAttribute('data-theme', saved);
         };
     </script>
