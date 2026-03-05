@@ -20,66 +20,53 @@
             margin: 0; padding: 0; width: 100%; height: 100%;
             font-family: 'Montserrat', sans-serif;
             background-color: var(--bg-color); color: var(--text-main);
-            display: flex; flex-direction: column; 
-            overflow-x: hidden; /* Verhindert seitliches Wackeln */
+            display: flex; flex-direction: column; overflow: hidden;
         }
 
         /* HEADER */
         .header-container {
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 20px; background: var(--header-bg); border-bottom: 2px solid var(--border-color);
-            height: 90px; flex-shrink: 0; z-index: 100;
+            height: 90px; flex-shrink: 0; z-index: 1000;
         }
-        .header-left { flex: 0 0 150px; }
         .header-left img { height: 70px; cursor: pointer; }
-        
-        .header-center { 
-            flex: 1; text-align: center; color: #B40404; font-weight: bold; font-size: 22px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        .header-right { 
-            flex: 0 0 240px; display: flex; align-items: center; justify-content: flex-end; gap: 15px;
-        }
-
-        #uhr-display { text-align: right; line-height: 1.1; }
+        .header-center { flex: 1; text-align: center; color: #B40404; font-weight: bold; font-size: 20px; padding: 0 10px; }
+        .header-right { flex: 0 0 150px; display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
         #uhrzeit { font-size: 2.2rem; font-weight: bold; color: #B40404; font-family: monospace; }
-        #datum { font-size: 0.9rem; color: #888; font-weight: bold; display: block; }
-        
         .menu-trigger { font-size: 32px; cursor: pointer; color: var(--accent-color); user-select: none; }
 
-        /* SIDEBAR (Korrigiert: Nur eine Definition!) */
+        /* SIDEBAR */
         .sidebar {
-            position: fixed; top: 0; right: -100%; width: 280px; height: 100%;
+            position: fixed; top: 0; right: -300px; width: 260px; height: 100%;
             background: var(--header-bg); box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-            transition: all 0.4s ease; z-index: 3000; padding: 25px;
-            visibility: hidden;
+            transition: 0.3s ease-in-out; z-index: 3000; padding: 20px;
         }
-        .sidebar.open { right: 0; visibility: visible; }
+        .sidebar.open { right: 0; }
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2500; }
 
         /* CONTENT */
         .content-container { display: flex; flex-grow: 1; padding: 20px; gap: 20px; overflow: hidden; }
-        .content-box { background: var(--card-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; flex: 1; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .content-box { background: var(--card-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; flex: 1; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         
-        .mobile-nav { display: none; height: 70px; background: var(--header-bg); border-top: 2px solid var(--border-color); justify-content: space-around; align-items: center; }
-        .nav-item { flex: 1; text-align: center; color: #888; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
-        .nav-item.active { color: #B40404; }
+        /* MOBILE NAV */
+        .mobile-nav { 
+            display: none; height: 70px; flex-shrink: 0;
+            background: var(--header-bg); border-top: 2px solid var(--border-color);
+            justify-content: space-around; align-items: center;
+        }
+        .nav-item { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #888; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        .nav-item.active { color: #B40404; background: rgba(180, 4, 4, 0.05); }
 
-        /* MOBILE OPTIMIERUNG (Zusammengeführt) */
         @media (max-width: 800px) {
-            .header-container { height: 70px; padding: 0 10px; }
-            .header-left { flex: 0 0 60px; }
-            .header-left img { height: 45px; }
-            .header-center { font-size: 15px; flex: 1; }
-            .header-right { flex: 0 0 0px; width: 0; overflow: hidden; }
-            
-            #uhr-display, .menu-trigger { display: none !important; }
-            
+            .header-container { height: 65px; padding: 0 15px; }
+            .header-center { font-size: 14px; text-align: left; }
+            .header-left { display: none; }
+            .header-right { flex: 0 0 50px; }
+            #uhrzeit { display: none; }
             .mobile-nav { display: flex; }
             .content-box { display: none; }
             .active-tab { display: flex !important; }
-            .sidebar { width: 80%; } /* Sidebar-Breite auf Handy */
+            .content-container { padding: 10px; }
         }
 
         .blink { animation: blinker 1s linear infinite; }
@@ -90,77 +77,57 @@
 
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     <div id="sidebar" class="sidebar">
-        <h2 style="margin-top:0">Einstellungen</h2>
-        <p>Design:</p>
-        <button onclick="setTheme('light')" style="width:100%; padding:10px; margin-bottom:10px; cursor:pointer">☀️ Hell</button>
-        <button onclick="setTheme('dark')" style="width:100%; padding:10px; margin-bottom:10px; cursor:pointer">🌙 Dunkel</button>
-        <button onclick="setTheme('system')" style="width:100%; padding:10px; margin-bottom:20px; cursor:pointer">🖥️ System</button>
-        <button onclick="toggleMenu()" style="width:100%; padding:10px; background:#888; color:white; border:none; border-radius:4px; cursor:pointer">Schließen</button>
+        <h3>Einstellungen</h3>
+        <button onclick="setTheme('light')" style="width:100%; margin-bottom:10px; padding:10px;">☀️ Hell</button>
+        <button onclick="setTheme('dark')" style="width:100%; margin-bottom:10px; padding:10px;">🌙 Dunkel</button>
+        <button onclick="toggleMenu()" style="width:100%; padding:10px; background:#888; color:white; border:none; border-radius:4px;">Schließen</button>
     </div>
 
     <div class="header-container">
-        <div class="header-left">
-            <img src="Logo-redesign-LG13-removebg-preview.png" onclick="manualRefresh()" alt="Logo">
-        </div>
+        <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" onclick="manualRefresh()"></div>
         <div class="header-center">Löschgruppenführung Barkhausen</div>
         <div class="header-right">
-            <div id="uhr-display">
-                <span id="datum">00.00.0000</span>
-                <span id="uhrzeit">00:00</span>
-            </div>
+            <div id="uhrzeit">00:00</div>
             <div class="menu-trigger" onclick="toggleMenu()">☰</div>
         </div>
     </div>
 
     <div class="content-container" id="swipeArea">
         <div id="tab-news" class="content-box active-tab">
-            <h2 style="text-align:center; color:var(--accent-color); border-bottom:2px solid #eee; padding-bottom:10px">📢 Aktuelles</h2>
-            <div id="news-container" style="overflow-y:auto; flex-grow:1">Lade Daten...</div>
+            <h2 style="text-align:center; color:var(--accent-color);">📢 Aktuelles</h2>
+            <div id="news-container">Lade Daten...</div>
         </div>
         <div id="tab-dienst" class="content-box">
-            <h2 style="text-align:center; color:var(--accent-color); border-bottom:2px solid #eee; padding-bottom:10px">📅 Dienstplan</h2>
-            <div id="dienst-container" style="overflow-y:auto; flex-grow:1">Lade Daten...</div>
+            <h2 style="text-align:center; color:var(--accent-color);">📅 Dienstplan</h2>
+            <div id="dienst-container">Lade Daten...</div>
         </div>
     </div>
 
     <div class="mobile-nav">
-        <div class="nav-item active" id="m-news" onclick="showTab('news')">📢 Aktuelles</div>
-        <div id="m-dienst" class="nav-item" onclick="showTab('dienst')">📅 Dienstplan</div>
+        <div class="nav-item active" id="m-news" onclick="showTab('news')">📢 News</div>
+        <div id="m-dienst" class="nav-item" onclick="showTab('dienst')">📅 Dienste</div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycby4cqLuPsVEGN_r0xSapBs_yM1syrGI45WkDBLLINPuwHiJcLZBal0_mdQMEQl9-OsG/exec";
+        const API_URL = "DEINE_SCRIPT_URL_HIER";
 
         function updateTime() {
             const jetzt = new Date();
-            const hh = String(jetzt.getHours()).padStart(2, '0');
-            const mm = String(jetzt.getMinutes()).padStart(2, '0');
-            const dd = String(jetzt.getDate()).padStart(2, '0');
-            const mo = String(jetzt.getMonth() + 1).padStart(2, '0');
-            const jj = jetzt.getFullYear();
-            
-            document.getElementById("uhrzeit").innerHTML = `${hh}<span class="blink">:</span>${mm}`;
-            document.getElementById("datum").innerHTML = `${dd}.${mo}.${jj}`;
+            document.getElementById("uhrzeit").innerHTML = 
+                `${String(jetzt.getHours()).padStart(2, '0')}<span class="blink">:</span>${String(jetzt.getMinutes()).padStart(2, '0')}`;
         }
         setInterval(updateTime, 1000);
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+            const o = document.getElementById('overlay');
+            o.style.display = o.style.display === 'block' ? 'none' : 'block';
+        }
 
         function setTheme(t) {
             document.body.setAttribute('data-theme', t);
             localStorage.setItem('theme-pref', t);
             toggleMenu();
-        }
-
-        function toggleMenu() {
-            const s = document.getElementById('sidebar');
-            const o = document.getElementById('overlay');
-            const isOpen = s.classList.contains('open');
-            if(isOpen) {
-                s.classList.remove('open');
-                o.style.display = 'none';
-            } else {
-                s.classList.add('open');
-                o.style.display = 'block';
-            }
         }
 
         function showTab(tab) {
@@ -169,18 +136,16 @@
             document.getElementById('tab-dienst').classList.toggle('active-tab', tab === 'dienst');
             document.getElementById('m-news').classList.toggle('active', tab === 'news');
             document.getElementById('m-dienst').classList.toggle('active', tab === 'dienst');
-            if(tab === 'dienst') setTimeout(() => {
-                const next = document.getElementById('next-row');
-                if(next) next.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
+            if(tab === 'dienst') scrollDienst();
         }
 
-        async function manualRefresh() {
-            const img = document.querySelector('.header-left img');
-            img.style.opacity = "0.5";
-            await loadData();
-            img.style.opacity = "1";
-        }
+        // SWIPE LOGIK
+        let startX = 0;
+        document.getElementById('swipeArea').addEventListener('touchstart', e => startX = e.touches[0].clientX);
+        document.getElementById('swipeArea').addEventListener('touchend', e => {
+            let diff = startX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 80) showTab(diff > 0 ? 'dienst' : 'news');
+        });
 
         async function loadData() {
             try {
@@ -193,11 +158,10 @@
 
         function renderNews(news) {
             document.getElementById('news-container').innerHTML = news.map(n => `
-                <div style="border-left:5px solid #5cb85c; padding:15px; background:var(--card-bg); margin-bottom:15px; border-radius:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <h3 style="margin:0 0 5px 0">${n.titel}</h3>
-                    <p style="margin:0">${n.inhalt}</p>
-                </div>
-            `).join('') + `<div style="font-size:0.7rem; color:#888; text-align:right">Update: ${new Date().toLocaleTimeString()}</div>`;
+                <div style="border-left:5px solid #5cb85c; padding:15px; background:var(--card-bg); margin-bottom:15px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="margin:0; color:#B40404">${n.titel}</h3>
+                    <p style="margin:5px 0 0 0">${n.inhalt}</p>
+                </div>`).join('');
         }
 
         function renderDienst(dienste) {
@@ -209,15 +173,20 @@
                 const isNext = (!nextFound && dObj >= heute);
                 if(isNext) nextFound = true;
                 
-                // Datum sauber formatieren (Fix für Bild 1)
-                const formattedDate = dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
-                
-                html += `<tr ${isNext ? 'id="next-row" style="background:rgba(255,214,0,0.1); border-left:5px solid #FFD600"' : ''} style="border-bottom:1px solid var(--border-color)">
-                    <td style="padding:15px; font-weight:bold; color:#B40404">${formattedDate}</td>
-                    <td style="padding:15px"><strong>${d.thema}</strong><br><small>${d.uhrzeit} | ${d.leitung}</small></td>
+                html += `<tr ${isNext ? 'id="next-row" style="background:rgba(255,214,0,0.15); border-left:5px solid #FFD600"' : ''} style="border-bottom:1px solid var(--border-color)">
+                    <td style="padding:15px; font-weight:bold; color:#B40404">${dObj.toLocaleDateString('de-DE')}</td>
+                    <td style="padding:15px"><strong>${d.thema}</strong><br><small>${d.uhrzeit.substring(0,5)} | ${d.leitung}</small></td>
                 </tr>`;
             });
             document.getElementById('dienst-container').innerHTML = html + "</table>";
+            scrollDienst();
+        }
+
+        function scrollDienst() {
+            setTimeout(() => {
+                const row = document.getElementById('next-row');
+                if(row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
         }
 
         window.onload = () => {
