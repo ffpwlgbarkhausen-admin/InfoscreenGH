@@ -175,24 +175,27 @@
         }
 
         function renderDienst(dienste) {
-            const container = document.getElementById('dienst-container');
-            if (!dienste || dienste.length === 0) {
-                container.innerHTML = "<p>Keine Dienste geplant.</p>";
-                return;
-            }
-            container.innerHTML = `<table class="dienst-table">` + 
-                dienste.slice(0, 10).map(d => `
-                <tr>
-                    <td class="d-date">${d.datum}<br><small>${d.uhrzeit} Uhr</small></td>
-                    <td>
-                        <strong>${d.thema}</strong><br>
-                        <span class="d-info">
-                            <span class="badge-w">👕 ${d.kleidung}</span> | 👤 ${d.leitung}
-                        </span>
-                    </td>
-                </tr>
-            `).join('') + `</table>`;
-        }
+    const container = document.getElementById('dienst-container');
+    if (!dienste || dienste.length === 0) {
+        container.innerHTML = "<p>Keine Dienste geplant.</p>";
+        return;
+    }
+    container.innerHTML = `<table class="dienst-table">` + 
+        dienste.slice(0, 10).map(d => `
+        <tr>
+            <td class="d-date">
+                <span style="font-size: 1.1rem;">${d.datum}</span><br>
+                <small style="color: #666;">${d.uhrzeit} Uhr</small>
+            </td>
+            <td>
+                <strong style="font-size: 1.1rem; display: block; margin-bottom: 4px;">${d.thema}</strong>
+                <span class="d-info">
+                    <span class="badge-w">👕 ${d.kleidung}</span> | <span style="color: #4B0082;">👤 ${d.leitung}</span>
+                </span>
+            </td>
+        </tr>
+    `).join('') + `</table>`;
+}
 
         // 3. MOBILE NAVIGATION LOGIK
         function switchTab(tab) {
