@@ -29,17 +29,9 @@
             padding: 0 20px; background: var(--header-bg); border-bottom: 2px solid var(--border-color);
             height: 90px; flex-shrink: 0; z-index: 1000;
         }
-        .header-left { flex: 0 0 120px; display: flex; align-items: center; }
         .header-left img { height: 70px; cursor: pointer; }
-        
-        .header-center { 
-            flex: 1; text-align: center; color: #B40404; font-weight: bold; font-size: 18px; 
-            padding: 0 10px;
-        }
-
-        .header-right { 
-            flex: 0 0 180px; display: flex; align-items: center; justify-content: flex-end; gap: 15px; 
-        }
+        .header-center { flex: 1; text-align: center; color: #B40404; font-weight: bold; font-size: 18px; }
+        .header-right { flex: 0 0 180px; display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
 
         #uhr-display { text-align: right; line-height: 1.1; }
         #uhrzeit { font-size: 1.8rem; font-weight: bold; color: #B40404; font-family: monospace; }
@@ -47,12 +39,23 @@
         
         .menu-trigger { font-size: 32px; cursor: pointer; color: var(--accent-color); padding: 5px; }
 
+        /* KIOSK LINKS - Nur Desktop/Kiosk sichtbar */
+        .kiosk-links {
+            display: flex; gap: 15px; padding: 10px 20px; background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color); justify-content: center;
+        }
+        .kiosk-btn {
+            padding: 8px 16px; background: var(--accent-color); color: white;
+            text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+        .kiosk-btn:hover { opacity: 0.8; }
+
         /* SIDEBAR */
         .sidebar {
             position: fixed; top: 0; right: -360px; width: 280px; height: 100%;
             background: var(--header-bg); box-shadow: -5px 0 15px rgba(0,0,0,0.3);
-            transition: all 0.3s ease-in-out; z-index: 3000; padding: 25px;
-            visibility: hidden;
+            transition: all 0.3s ease-in-out; z-index: 3000; padding: 25px; visibility: hidden;
         }
         .sidebar.open { right: 0; visibility: visible; }
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2500; }
@@ -62,13 +65,12 @@
         .content-box { 
             background: var(--card-bg); border-radius: 12px; padding: 0 20px 20px 20px; 
             display: flex; flex-direction: column; flex: 1; overflow-y: auto; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; scroll-behavior: smooth;
         }
 
-        /* FIXIERTE ÜBERSCHRIFT */
         .content-box h2 {
             position: sticky; top: 0; background: var(--card-bg); margin: 0;
-            padding: 20px 0; z-index: 10; text-align: center; color: var(--accent-color);
+            height: 70px; line-height: 70px; z-index: 10; text-align: center; color: var(--accent-color);
             border-bottom: 1px solid var(--border-color);
         }
         
@@ -82,8 +84,8 @@
         .nav-item.active { color: #B40404; background: rgba(180, 4, 4, 0.05); }
 
         @media (max-width: 800px) {
+            .kiosk-links { display: none !important; } /* Versteckt Buttons mobil */
             .header-container { height: 70px; padding: 0 10px; }
-            .header-left { flex: 0 0 50px; }
             .header-left img { height: 45px; }
             .header-center { font-size: 14px; }
             .header-right { flex: 0 0 50px; }
@@ -102,11 +104,10 @@
 
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     <div id="sidebar" class="sidebar">
-        <h2 style="border:none">Einstellungen</h2>
-        <p>Design-Modus:</p>
-        <button onclick="setTheme('light')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer; border:1px solid #ccc; border-radius:8px;">☀️ Hell</button>
-        <button onclick="setTheme('dark')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer; border:1px solid #ccc; border-radius:8px;">🌙 Dunkel</button>
-        <button onclick="setTheme('system')" style="width:100%; padding:12px; margin-bottom:25px; cursor:pointer; border:1px solid #ccc; border-radius:8px;">🖥️ System</button>
+        <h2 style="border:none; position:static; height:auto; line-height:normal; padding:0; margin-bottom:20px;">Einstellungen</h2>
+        <button onclick="setTheme('light')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer;">☀️ Hell</button>
+        <button onclick="setTheme('dark')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer;">🌙 Dunkel</button>
+        <button onclick="setTheme('system')" style="width:100%; padding:12px; margin-bottom:25px; cursor:pointer;">🖥️ System</button>
         <button onclick="toggleMenu()" style="width:100%; padding:12px; background:#B40404; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Schließen</button>
     </div>
 
@@ -115,21 +116,27 @@
         <div class="header-center">Löschgruppenführung Barkhausen</div>
         <div class="header-right">
             <div id="uhr-display">
-                <span id="datum-header">00.00.0000</span>
-                <span id="uhrzeit">00:00</span>
+                <span id="datum-header">05.03.2026</span>
+                <span id="uhrzeit">14:42</span>
             </div>
             <div class="menu-trigger" onclick="toggleMenu()">☰</div>
         </div>
     </div>
 
+    <div class="kiosk-links">
+        <a href="DEIN_LINK_ZUM_EINSATZNACHWEIS" target="_blank" class="kiosk-btn">📋 Einsatznachweise</a>
+        <a href="DEIN_LINK_2" target="_blank" class="kiosk-btn">📁 Dokumente</a>
+        <a href="DEIN_LINK_3" target="_blank" class="kiosk-btn">🚒 Fahrzeugstatus</a>
+    </div>
+
     <div class="content-container" id="swipeArea">
         <div id="tab-news" class="content-box active-tab">
             <h2>📢 Aktuelles</h2>
-            <div id="news-container" style="padding-top:15px">Lade...</div>
+            <div id="news-container">Lade...</div>
         </div>
         <div id="tab-dienst" class="content-box">
             <h2>📅 Dienstplan</h2>
-            <div id="dienst-container" style="padding-top:15px">Lade...</div>
+            <div id="dienst-container">Lade...</div>
         </div>
     </div>
 
@@ -147,6 +154,7 @@
             document.getElementById("datum-header").innerHTML = jetzt.toLocaleDateString('de-DE');
         }
         setInterval(updateTime, 1000);
+        setInterval(loadData, 600000); // 10 Min Refresh
 
         function toggleMenu() {
             const open = document.getElementById('sidebar').classList.toggle('open');
@@ -198,7 +206,7 @@
 
         function renderNews(news) {
             document.getElementById('news-container').innerHTML = news.map(n => `
-                <div style="border-left:5px solid #5cb85c; padding:15px; background:var(--card-bg); margin-bottom:15px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="border-left:5px solid #5cb85c; padding:15px; background:var(--card-bg); margin-top:15px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <h3 style="margin:0; color:#B40404">${n.titel}</h3>
                     <p style="margin:5px 0 0 0">${n.inhalt}</p>
                 </div>`).join('');
@@ -228,17 +236,18 @@
 
         function scrollDienst() {
             setTimeout(() => {
+                const container = document.getElementById('tab-dienst');
                 const row = document.getElementById('next-row');
-                if(row) {
-                    // Scrollt den Dienst an den oberen Rand der Box (unter die fixierte Überschrift)
-                    row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if(row && container) {
+                    // Erhöhter Offset (120px) für Kiosk-Buttons + Sticky Header
+                    const offset = window.innerWidth > 800 ? 120 : 70;
+                    const rowPos = row.offsetTop - offset;
+                    container.scrollTo({ top: rowPos, behavior: 'smooth' });
                 }
             }, 600);
         }
 
-        async function manualRefresh() {
-            await loadData();
-        }
+        async function manualRefresh() { await loadData(); }
 
         window.onload = () => {
             updateTime();
