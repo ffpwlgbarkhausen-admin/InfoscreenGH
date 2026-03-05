@@ -176,22 +176,42 @@
 
         function renderDienst(dienste) {
     const container = document.getElementById('dienst-container');
+    if (!dienste || dienste.length === 0) {
+        container.innerHTML = "<p>Keine Dienste geplant.</p>";
+        return;
+    }
+
     container.innerHTML = `<table class="dienst-table">` + 
-        dienste.slice(0, 8).map(d => `
-        <tr>
-            <td class="d-date" style="padding: 10px 0;">
-                <span style="font-size: 1.4rem; color: #B40404; font-weight: bold;">${d.datum}</span><br>
-                <span style="font-size: 1rem; color: #333;">${d.uhrzeit} Uhr</span>
-            </td>
-            <td style="padding: 10px 0 10px 15px;">
-                <strong style="font-size: 1.1rem; color: #000;">${d.thema}</strong><br>
-                <div style="margin-top: 5px;">
-                    <span class="badge-w">👕 ${d.kleidung}</span> 
-                    <span style="color: #666; margin-left: 10px;">👤 ${d.leitung}</span>
-                </div>
-            </td>
-        </tr>
-    `).join('') + `</table>`;
+        dienste.slice(0, 10).map(d => {
+            // SICHERHEITS-CHECK: Wir formatieren hier zur Not selbst nach
+            let displayDate = d.datum;
+            let displayTime = d.uhrzeit;
+
+            // Falls ISO-String ankommt (2026-01-08T...), schneiden wir ihn zurecht
+            if (displayDate.includes('T')) {
+                const dateParts = new Date(displayDate);
+                displayDate = dateParts.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ".";
+            }
+            if (displayTime.includes('T')) {
+                const timeParts = new Date(displayTime);
+                displayTime = timeParts.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+            }
+
+            return `
+            <tr>
+                <td class="d-date" style="padding: 10px 0;">
+                    <span style="font-size: 1.4rem; color: #B40404; font-weight: bold;">${displayDate}</span><br>
+                    <span style="font-size: 1rem; color: #333;">${displayTime} Uhr</span>
+                </td>
+                <td style="padding: 10px 0 10px 15px;">
+                    <strong style="font-size: 1.1rem; color: #000;">${d.thema}</strong><br>
+                    <div style="margin-top: 5px;">
+                        <span class="badge-w">👕 ${d.kleidung}</span> 
+                        <span style="color: #666; margin-left: 10px;">👤 ${d.leitung}</span>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('') + `</table>`;
 }
 
         // 3. MOBILE NAVIGATION LOGIK
