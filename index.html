@@ -30,11 +30,11 @@
             height: 90px; flex-shrink: 0; z-index: 1000;
         }
         .header-left { flex: 0 0 120px; display: flex; align-items: center; }
-        .header-left img { height: 70px; cursor: pointer; transition: 0.2s; }
+        .header-left img { height: 70px; cursor: pointer; }
         
         .header-center { 
             flex: 1; text-align: center; color: #B40404; font-weight: bold; font-size: 18px; 
-            padding: 0 10px; line-height: 1.2;
+            padding: 0 10px;
         }
 
         .header-right { 
@@ -47,7 +47,7 @@
         
         .menu-trigger { font-size: 32px; cursor: pointer; color: var(--accent-color); padding: 5px; }
 
-        /* SIDEBAR FIX: Weiter weg geschoben & unsichtbar */
+        /* SIDEBAR */
         .sidebar {
             position: fixed; top: 0; right: -360px; width: 280px; height: 100%;
             background: var(--header-bg); box-shadow: -5px 0 15px rgba(0,0,0,0.3);
@@ -59,7 +59,18 @@
 
         /* CONTENT */
         .content-container { display: flex; flex-grow: 1; padding: 20px; gap: 20px; overflow: hidden; }
-        .content-box { background: var(--card-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; flex: 1; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .content-box { 
+            background: var(--card-bg); border-radius: 12px; padding: 0 20px 20px 20px; 
+            display: flex; flex-direction: column; flex: 1; overflow-y: auto; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative;
+        }
+
+        /* FIXIERTE ÜBERSCHRIFT */
+        .content-box h2 {
+            position: sticky; top: 0; background: var(--card-bg); margin: 0;
+            padding: 20px 0; z-index: 10; text-align: center; color: var(--accent-color);
+            border-bottom: 1px solid var(--border-color);
+        }
         
         /* MOBILE NAV */
         .mobile-nav { 
@@ -91,8 +102,7 @@
 
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     <div id="sidebar" class="sidebar">
-        <h2 style="margin-top:0; color:#B40404">Einstellungen</h2>
-        <hr style="border:0; border-top:1px solid var(--border-color); margin-bottom:20px;">
+        <h2 style="border:none">Einstellungen</h2>
         <p>Design-Modus:</p>
         <button onclick="setTheme('light')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer; border:1px solid #ccc; border-radius:8px;">☀️ Hell</button>
         <button onclick="setTheme('dark')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer; border:1px solid #ccc; border-radius:8px;">🌙 Dunkel</button>
@@ -101,9 +111,7 @@
     </div>
 
     <div class="header-container">
-        <div class="header-left">
-            <img src="Logo-redesign-LG13-removebg-preview.png" onclick="manualRefresh()" alt="Logo">
-        </div>
+        <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" onclick="manualRefresh()" alt="Logo"></div>
         <div class="header-center">Löschgruppenführung Barkhausen</div>
         <div class="header-right">
             <div id="uhr-display">
@@ -116,38 +124,33 @@
 
     <div class="content-container" id="swipeArea">
         <div id="tab-news" class="content-box active-tab">
-            <h2 style="text-align:center; color:var(--accent-color);">📢 Aktuelles</h2>
-            <div id="news-container">Lade...</div>
+            <h2>📢 Aktuelles</h2>
+            <div id="news-container" style="padding-top:15px">Lade...</div>
         </div>
         <div id="tab-dienst" class="content-box">
-            <h2 style="text-align:center; color:var(--accent-color);">📅 Dienstplan</h2>
-            <div id="dienst-container">Lade...</div>
+            <h2>📅 Dienstplan</h2>
+            <div id="dienst-container" style="padding-top:15px">Lade...</div>
         </div>
     </div>
 
     <div class="mobile-nav">
         <div class="nav-item active" id="m-news" onclick="showTab('news')">📢 Aktuelles</div>
         <div id="m-dienst" class="nav-item" onclick="showTab('dienst')">📅 Dienstplan</div>
-        <div class="nav-item" id="m-listen">📋 Listen</div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycby4cqLuPsVEGN_r0xSapBs_yM1syrGI45WkDBLLINPuwHiJcLZBal0_mdQMEQl9-OsG/exec";
+        const API_URL = "DEINE_SCRIPT_URL_HIER";
 
         function updateTime() {
             const jetzt = new Date();
-            const hh = String(jetzt.getHours()).padStart(2, '0');
-            const mm = String(jetzt.getMinutes()).padStart(2, '0');
-            document.getElementById("uhrzeit").innerHTML = `${hh}<span class="blink">:</span>${mm}`;
+            document.getElementById("uhrzeit").innerHTML = `${String(jetzt.getHours()).padStart(2, '0')}<span class="blink">:</span>${String(jetzt.getMinutes()).padStart(2, '0')}`;
             document.getElementById("datum-header").innerHTML = jetzt.toLocaleDateString('de-DE');
         }
         setInterval(updateTime, 1000);
 
         function toggleMenu() {
-            const s = document.getElementById('sidebar');
-            const o = document.getElementById('overlay');
-            const open = s.classList.toggle('open');
-            o.style.display = open ? 'block' : 'none';
+            const open = document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').style.display = open ? 'block' : 'none';
         }
 
         function setTheme(t) {
@@ -162,15 +165,10 @@
             if(document.getElementById('sidebar').classList.contains('open')) toggleMenu();
         }
 
-        // Fix für die Uhrzeit (kein 1899-12-30 mehr!)
         function formatUhrzeit(val) {
             if(!val) return "--:--";
             let s = String(val);
-            if(s.includes('T')) {
-                // Extrahiere HH:mm aus ISO String
-                return s.split('T')[1].substring(0, 5);
-            }
-            return s.substring(0, 5);
+            return s.includes('T') ? s.split('T')[1].substring(0, 5) : s.substring(0, 5);
         }
 
         function showTab(tab) {
@@ -189,20 +187,13 @@
             if (Math.abs(diff) > 70) showTab(diff > 0 ? 'dienst' : 'news');
         });
 
-        async function manualRefresh() {
-            const img = document.querySelector('.header-left img');
-            img.style.opacity = "0.5";
-            await loadData();
-            img.style.opacity = "1";
-        }
-
         async function loadData() {
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
                 renderNews(data.news);
                 renderDienst(data.dienste);
-            } catch (e) { console.error("API Fehler"); }
+            } catch (e) { console.error("Fehler"); }
         }
 
         function renderNews(news) {
@@ -238,8 +229,15 @@
         function scrollDienst() {
             setTimeout(() => {
                 const row = document.getElementById('next-row');
-                if(row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 500);
+                if(row) {
+                    // Scrollt den Dienst an den oberen Rand der Box (unter die fixierte Überschrift)
+                    row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 600);
+        }
+
+        async function manualRefresh() {
+            await loadData();
         }
 
         window.onload = () => {
