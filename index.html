@@ -30,11 +30,11 @@
             height: 90px; flex-shrink: 0; z-index: 1000;
         }
         .header-left { flex: 0 0 120px; display: flex; align-items: center; }
-        .header-left img { height: 70px; cursor: pointer; }
+        .header-left img { height: 70px; cursor: pointer; transition: 0.2s; }
         
         .header-center { 
-            flex: 1; text-align: center; color: #B40404; font-weight: bold; font-size: 20px; 
-            padding: 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            flex: 1; text-align: center; color: #B40404; font-weight: bold; font-size: 18px; 
+            padding: 0 10px; line-height: 1.2;
         }
 
         .header-right { 
@@ -42,18 +42,19 @@
         }
 
         #uhr-display { text-align: right; line-height: 1.1; }
-        #uhrzeit { font-size: 2rem; font-weight: bold; color: #B40404; font-family: monospace; }
-        #datum-header { font-size: 0.8rem; color: #888; font-weight: bold; display: block; }
+        #uhrzeit { font-size: 1.8rem; font-weight: bold; color: #B40404; font-family: monospace; }
+        #datum-header { font-size: 0.75rem; color: #888; font-weight: bold; display: block; }
         
-        .menu-trigger { font-size: 32px; cursor: pointer; color: var(--accent-color); user-select: none; }
+        .menu-trigger { font-size: 32px; cursor: pointer; color: var(--accent-color); padding: 5px; }
 
-        /* SIDEBAR */
+        /* SIDEBAR FIX: Weiter weg geschoben & unsichtbar */
         .sidebar {
-            position: fixed; top: 0; right: -300px; width: 260px; height: 100%;
-            background: var(--header-bg); box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-            transition: 0.3s ease-in-out; z-index: 3000; padding: 25px;
+            position: fixed; top: 0; right: -360px; width: 280px; height: 100%;
+            background: var(--header-bg); box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease-in-out; z-index: 3000; padding: 25px;
+            visibility: hidden;
         }
-        .sidebar.open { right: 0; }
+        .sidebar.open { right: 0; visibility: visible; }
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2500; }
 
         /* CONTENT */
@@ -66,19 +67,19 @@
             background: var(--header-bg); border-top: 2px solid var(--border-color);
             justify-content: space-around; align-items: center;
         }
-        .nav-item { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #888; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        .nav-item { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #888; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
         .nav-item.active { color: #B40404; background: rgba(180, 4, 4, 0.05); }
 
         @media (max-width: 800px) {
             .header-container { height: 70px; padding: 0 10px; }
             .header-left { flex: 0 0 50px; }
             .header-left img { height: 45px; }
-            .header-center { font-size: 14px; text-align: center; }
+            .header-center { font-size: 14px; }
             .header-right { flex: 0 0 50px; }
             #uhr-display { display: none; }
             .mobile-nav { display: flex; }
             .content-box { display: none; }
-            .active-tab { display: flex !important; }
+            .active-tab { display: flex !important; width: 100% !important; }
             .content-container { padding: 10px; }
         }
 
@@ -86,16 +87,17 @@
         @keyframes blinker { 50% { opacity: 0; } }
     </style>
 </head>
-<body data-theme="system">
+<body>
 
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     <div id="sidebar" class="sidebar">
-        <h2 style="margin-top:0">Einstellungen</h2>
-        <p>Design:</p>
-        <button onclick="setTheme('light')" style="width:100%; padding:10px; margin-bottom:10px; cursor:pointer">☀️ Hell</button>
-        <button onclick="setTheme('dark')" style="width:100%; padding:10px; margin-bottom:10px; cursor:pointer">🌙 Dunkel</button>
-        <button onclick="setTheme('system')" style="width:100%; padding:10px; margin-bottom:20px; cursor:pointer">🖥️ System</button>
-        <button onclick="toggleMenu()" style="width:100%; padding:10px; background:#888; color:white; border:none; border-radius:4px; cursor:pointer">Schließen</button>
+        <h2 style="margin-top:0; color:#B40404">Einstellungen</h2>
+        <hr style="border:0; border-top:1px solid var(--border-color); margin-bottom:20px;">
+        <p>Design-Modus:</p>
+        <button onclick="setTheme('light')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer; border:1px solid #ccc; border-radius:8px;">☀️ Hell</button>
+        <button onclick="setTheme('dark')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer; border:1px solid #ccc; border-radius:8px;">🌙 Dunkel</button>
+        <button onclick="setTheme('system')" style="width:100%; padding:12px; margin-bottom:25px; cursor:pointer; border:1px solid #ccc; border-radius:8px;">🖥️ System</button>
+        <button onclick="toggleMenu()" style="width:100%; padding:12px; background:#B40404; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Schließen</button>
     </div>
 
     <div class="header-container">
@@ -115,17 +117,18 @@
     <div class="content-container" id="swipeArea">
         <div id="tab-news" class="content-box active-tab">
             <h2 style="text-align:center; color:var(--accent-color);">📢 Aktuelles</h2>
-            <div id="news-container">Lade Daten...</div>
+            <div id="news-container">Lade...</div>
         </div>
         <div id="tab-dienst" class="content-box">
             <h2 style="text-align:center; color:var(--accent-color);">📅 Dienstplan</h2>
-            <div id="dienst-container">Lade Daten...</div>
+            <div id="dienst-container">Lade...</div>
         </div>
     </div>
 
     <div class="mobile-nav">
-        <div class="nav-item active" id="m-news" onclick="showTab('news')">📢 News</div>
-        <div id="m-dienst" class="nav-item" onclick="showTab('dienst')">📅 Dienste</div>
+        <div class="nav-item active" id="m-news" onclick="showTab('news')">📢 Aktuelles</div>
+        <div id="m-dienst" class="nav-item" onclick="showTab('dienst')">📅 Dienstplan</div>
+        <div class="nav-item" id="m-listen">📋 Listen</div>
     </div>
 
     <script>
@@ -135,25 +138,39 @@
             const jetzt = new Date();
             const hh = String(jetzt.getHours()).padStart(2, '0');
             const mm = String(jetzt.getMinutes()).padStart(2, '0');
-            const dd = String(jetzt.getDate()).padStart(2, '0');
-            const mo = String(jetzt.getMonth() + 1).padStart(2, '0');
-            const jj = jetzt.getFullYear();
-            
             document.getElementById("uhrzeit").innerHTML = `${hh}<span class="blink">:</span>${mm}`;
-            document.getElementById("datum-header").innerHTML = `${dd}.${mo}.${jj}`;
+            document.getElementById("datum-header").innerHTML = jetzt.toLocaleDateString('de-DE');
         }
         setInterval(updateTime, 1000);
 
         function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
+            const s = document.getElementById('sidebar');
             const o = document.getElementById('overlay');
-            o.style.display = o.style.display === 'block' ? 'none' : 'block';
+            const open = s.classList.toggle('open');
+            o.style.display = open ? 'block' : 'none';
         }
 
         function setTheme(t) {
-            document.body.setAttribute('data-theme', t);
-            localStorage.setItem('theme-pref', t);
-            toggleMenu();
+            if(t === 'system') {
+                localStorage.removeItem('theme-pref');
+                const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.body.setAttribute('data-theme', dark ? 'dark' : 'light');
+            } else {
+                document.body.setAttribute('data-theme', t);
+                localStorage.setItem('theme-pref', t);
+            }
+            if(document.getElementById('sidebar').classList.contains('open')) toggleMenu();
+        }
+
+        // Fix für die Uhrzeit (kein 1899-12-30 mehr!)
+        function formatUhrzeit(val) {
+            if(!val) return "--:--";
+            let s = String(val);
+            if(s.includes('T')) {
+                // Extrahiere HH:mm aus ISO String
+                return s.split('T')[1].substring(0, 5);
+            }
+            return s.substring(0, 5);
         }
 
         function showTab(tab) {
@@ -169,7 +186,7 @@
         document.getElementById('swipeArea').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('swipeArea').addEventListener('touchend', e => {
             let diff = startX - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 80) showTab(diff > 0 ? 'dienst' : 'news');
+            if (Math.abs(diff) > 70) showTab(diff > 0 ? 'dienst' : 'news');
         });
 
         async function manualRefresh() {
@@ -185,7 +202,7 @@
                 const data = await res.json();
                 renderNews(data.news);
                 renderDienst(data.dienste);
-            } catch (e) { console.error("Fehler beim Laden"); }
+            } catch (e) { console.error("API Fehler"); }
         }
 
         function renderNews(news) {
@@ -200,17 +217,18 @@
             const heute = new Date(); heute.setHours(0,0,0,0);
             let nextFound = false;
             let html = `<table style="width:100%; border-collapse:collapse;">`;
+            
             dienste.forEach(d => {
                 const dObj = new Date(d.datum);
                 const isNext = (!nextFound && dObj >= heute);
                 if(isNext) nextFound = true;
                 
-                // Fix für das Datum im Kiosk
-                const dateStr = dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'});
+                const timeStr = formatUhrzeit(d.uhrzeit);
+                const dateStr = dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
                 
                 html += `<tr ${isNext ? 'id="next-row" style="background:rgba(255,214,0,0.15); border-left:5px solid #FFD600"' : ''} style="border-bottom:1px solid var(--border-color)">
-                    <td style="padding:15px; font-weight:bold; color:#B40404">${dateStr}</td>
-                    <td style="padding:15px"><strong>${d.thema}</strong><br><small>${d.uhrzeit} | ${d.leitung}</small></td>
+                    <td style="padding:15px; font-weight:bold; color:#B40404; white-space:nowrap;">${dateStr}<br><span style="color:var(--text-main); font-size:0.8rem">${timeStr} Uhr</span></td>
+                    <td style="padding:15px"><strong>${d.thema}</strong><br><small>${d.leitung}</small></td>
                 </tr>`;
             });
             document.getElementById('dienst-container').innerHTML = html + "</table>";
@@ -221,14 +239,14 @@
             setTimeout(() => {
                 const row = document.getElementById('next-row');
                 if(row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 300);
+            }, 500);
         }
 
         window.onload = () => {
             updateTime();
             loadData();
-            const saved = localStorage.getItem('theme-pref') || 'system';
-            document.body.setAttribute('data-theme', saved);
+            const saved = localStorage.getItem('theme-pref');
+            if(saved) setTheme(saved); else setTheme('system');
         };
     </script>
 </body>
