@@ -53,7 +53,6 @@
             font-size: 1.6rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;
         }
 
-        /* Beide Boxen teilen sich den Platz 50/50 */
         .box-news { flex: 1; } 
         .box-dienst { flex: 1; } 
 
@@ -62,12 +61,8 @@
         .news-card { border-left: 6px solid #5cb85c; padding: 15px; background: #fff; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .news-card.kat-dringend { border-left-color: #B40404; }
         .news-card img { 
-            width: 100%; 
-            border-radius: 8px; 
-            margin-bottom: 12px; 
-            max-height: 300px; /* Mehr Platz für Bilder */
-            object-fit: cover; 
-            display: block;
+            width: 100%; border-radius: 8px; margin-bottom: 12px; 
+            max-height: 300px; object-fit: cover; display: block;
         }
         .news-card h3 { margin: 0 0 8px 0; font-size: 1.4rem; color: #012796; }
         .news-card p { font-size: 1.1rem; line-height: 1.4; color: #333; margin: 0; }
@@ -77,19 +72,24 @@
         .dienst-table { width: 100%; border-collapse: collapse; }
         .dienst-table tr { border-bottom: 1px solid #eee; }
         .highlight-row { background-color: rgba(255, 235, 59, 0.15); border-left: 6px solid #FFD600; }
-        .badge-w { background: #012796; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
+        
+        .d-date-cell {
+            width: 95px; /* Kompakter für zweistellige Jahreszahl */
+            text-align: center; 
+            border-right: 3px solid #eee; 
+            padding: 15px 5px;
+        }
+        .d-date-text {
+            font-size: 1.2rem; 
+            color: #B40404; 
+            font-weight: bold;
+            white-space: nowrap;
+        }
 
-        /* MOBILE NAVIGATION */
-        #mobile-nav { display: none; }
+        .badge-w { background: #012796; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
 
         @media (max-width: 1024px) {
             .content-container { flex-direction: column; overflow-y: auto; }
-            .button-bar { display: none; }
-            #mobile-nav { 
-                display: flex; position: fixed; bottom: 0; width: 100%; height: 60px; 
-                background: white; border-top: 1px solid #ccc; z-index: 100;
-            }
-            #mobile-nav button { flex: 1; border: none; background: none; font-weight: bold; font-size: 1rem; color: #012796; }
         }
     </style>
 </head>
@@ -119,11 +119,6 @@
         </div>
     </div>
 
-    <div id="mobile-nav">
-        <button onclick="switchTab('news')">📢 News</button>
-        <button onclick="switchTab('dienst')">📅 Dienstplan</button>
-    </div>
-
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycby4cqLuPsVEGN_r0xSapBs_yM1syrGI45WkDBLLINPuwHiJcLZBal0_mdQMEQl9-OsG/exec";
         
@@ -133,7 +128,6 @@
             const mm = String(jetzt.getMinutes()).padStart(2, '0');
             const ss = String(jetzt.getSeconds()).padStart(2, '0');
             document.getElementById("uhrzeit").innerHTML = `${hh}<span class="blink">:</span>${mm}<span class="uhr-sekunden">:${ss}</span>`;
-            
             if (hh === "03" && mm === "00") location.reload(); 
         }
         setInterval(updateTime, 1000);
@@ -170,22 +164,22 @@
                     let isNext = false;
                     if (!nextFound && dObj >= heute) { isNext = true; nextFound = true; }
 
-                    // Uhrzeit-Fix für ISO-Strings
                     let displayTime = d.uhrzeit;
                     if (d.uhrzeit.includes('T')) {
                         displayTime = d.uhrzeit.split('T')[1].substring(0, 5);
                     }
 
+                    // HIER: Jahr auf '2-digit' gesetzt
                     let displayDate = d.datum;
                     if (d.datum.includes('T')) {
-                        displayDate = dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit'}) + ".";
+                        displayDate = dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
                     }
 
                     return `
                     <tr ${isNext ? 'id="next-service" class="highlight-row"' : ''}>
-                        <td style="width: 90px; text-align: center; border-right: 3px solid #eee; padding: 15px 5px;">
-                            <span style="font-size: 1.5rem; color: #B40404; font-weight: bold;">${displayDate}</span><br>
-                            <span style="font-size: 1.0rem; font-weight: bold; color: #444;">${displayTime} Uhr</span>
+                        <td class="d-date-cell">
+                            <span class="d-date-text">${displayDate}</span><br>
+                            <span style="font-size: 0.95rem; font-weight: bold; color: #444;">${displayTime} Uhr</span>
                         </td>
                         <td style="padding-left: 15px; padding-top: 10px; padding-bottom: 10px;">
                             <span style="font-size: 1.2rem; font-weight: 700; color: #000; display: block; margin-bottom: 5px;">${d.thema}</span>
@@ -201,11 +195,6 @@
                 const nextElem = document.getElementById('next-service');
                 if (nextElem) nextElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 800);
-        }
-
-        function switchTab(tab) {
-            document.querySelector('.box-news').style.display = (tab === 'news') ? 'flex' : 'none';
-            document.querySelector('.box-dienst').style.display = (tab === 'dienst') ? 'flex' : 'none';
         }
 
         window.onload = () => { updateTime(); loadData(); setInterval(loadData, 300000); };
