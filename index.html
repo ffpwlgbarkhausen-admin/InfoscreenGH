@@ -176,22 +176,19 @@
 
         function renderDienst(dienste) {
     const container = document.getElementById('dienst-container');
-    if (!dienste || dienste.length === 0) {
-        container.innerHTML = "<p>Keine Dienste geplant.</p>";
-        return;
-    }
     container.innerHTML = `<table class="dienst-table">` + 
-        dienste.slice(0, 10).map(d => `
+        dienste.slice(0, 8).map(d => `
         <tr>
-            <td class="d-date">
-                <span style="font-size: 1.1rem;">${d.datum}</span><br>
-                <small style="color: #666;">${d.uhrzeit} Uhr</small>
+            <td class="d-date" style="padding: 10px 0;">
+                <span style="font-size: 1.4rem; color: #B40404; font-weight: bold;">${d.datum}</span><br>
+                <span style="font-size: 1rem; color: #333;">${d.uhrzeit} Uhr</span>
             </td>
-            <td>
-                <strong style="font-size: 1.1rem; display: block; margin-bottom: 4px;">${d.thema}</strong>
-                <span class="d-info">
-                    <span class="badge-w">👕 ${d.kleidung}</span> | <span style="color: #4B0082;">👤 ${d.leitung}</span>
-                </span>
+            <td style="padding: 10px 0 10px 15px;">
+                <strong style="font-size: 1.1rem; color: #000;">${d.thema}</strong><br>
+                <div style="margin-top: 5px;">
+                    <span class="badge-w">👕 ${d.kleidung}</span> 
+                    <span style="color: #666; margin-left: 10px;">👤 ${d.leitung}</span>
+                </div>
             </td>
         </tr>
     `).join('') + `</table>`;
