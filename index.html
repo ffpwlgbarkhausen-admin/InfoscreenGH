@@ -75,14 +75,31 @@
         }
         
         /* MOBILE NAV */
-        .mobile-nav { 
-            display: none; height: 70px; flex-shrink: 0;
-            background: var(--header-bg); border-top: 2px solid var(--border-color);
-            justify-content: space-around; align-items: center;
-        }
-        .nav-item { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #888; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
-        .nav-item.active { color: #B40404; background: rgba(180, 4, 4, 0.05); }
+.mobile-nav { 
+    display: none; height: 70px; flex-shrink: 0;
+    background: var(--header-bg); border-top: 2px solid var(--border-color);
+    display: flex; /* Überschreibt das bisherige 'display: none' für die Anzeige */
+    flex-direction: row; /* Sicherstellen, dass sie nebeneinander liegen */
+}
 
+.nav-item { 
+    flex: 1; /* Das teilt den Platz gleichmäßig auf (33,3% pro Element) */
+    height: 100%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    color: #888; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-size: 0.75rem; /* Etwas kleiner, damit der Text nicht umbricht */
+    text-align: center;
+}
+
+.nav-item.active { 
+    color: #B40404; 
+    background: rgba(180, 4, 4, 0.05); 
+}
         @media (max-width: 800px) {
             .kiosk-links { display: none !important; } /* Versteckt Buttons mobil */
             .header-container { height: 70px; padding: 0 10px; }
@@ -138,11 +155,44 @@
             <h2>📅 Dienstplan</h2>
             <div id="dienst-container">Lade...</div>
         </div>
+        <div id="tab-formular" class="content-box">
+    <h2>📝 Reservierung</h2>
+    <form id="res-form" style="display:flex; flex-direction:column; gap:15px; padding:20px;">
+        <input type="text" id="res-name" placeholder="Name" required style="padding:10px; border-radius:8px; border:1px solid var(--border-color);">
+        <select id="res-objekt" style="padding:10px; border-radius:8px; border:1px solid var(--border-color);">
+            <option value="Schulungsraum">Schulungsraum</option>
+            <option value="13LF20">13LF20</option>
+            <option value="MTW13">MTW13</option>
+        </select>
+        <input type="text" id="res-grund" placeholder="Grund" required style="padding:10px; border-radius:8px; border:1px solid var(--border-color);">
+        <label style="font-size:0.8rem">Von:</label>
+        <input type="datetime-local" id="res-start" required style="padding:10px; border-radius:8px; border:1px solid var(--border-color);">
+        <label style="font-size:0.8rem">Bis:</label>
+        <input type="datetime-local" id="res-ende" required style="padding:10px; border-radius:8px; border:1px solid var(--border-color);">
+        <input type="email" id="res-mail" placeholder="E-Mail für Rückmeldung" required style="padding:10px; border-radius:8px; border:1px solid var(--border-color);">
+        <button type="submit" style="padding:15px; background:#B40404; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Antrag absenden</button>
+    </form>
+            <div style="margin-top: 30px; padding: 20px;">
+    <h3>Aktuelle Belegungen</h3>
+    <table id="res-liste" style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+        <thead>
+            <tr style="border-bottom: 2px solid var(--border-color);">
+                <th style="text-align:left; padding:10px;">Objekt</th>
+                <th style="text-align:left; padding:10px;">Datum</th>
+                <th style="text-align:left; padding:10px;">Status</th>
+            </tr>
+        </thead>
+        <tbody id="res-body">
+            </tbody>
+    </table>
+</div>
+</div>
     </div>
 
     <div class="mobile-nav">
         <div class="nav-item active" id="m-news" onclick="showTab('news')">📢 Aktuelles</div>
         <div id="m-dienst" class="nav-item" onclick="showTab('dienst')">📅 Dienstplan</div>
+        <div id="m-form" class="nav-item" onclick="showTab('formular')">📝 Reservieren</div>
     </div>
 
     <script>
@@ -180,13 +230,16 @@
         }
 
         function showTab(tab) {
-            if(window.innerWidth > 800) return;
-            document.getElementById('tab-news').classList.toggle('active-tab', tab === 'news');
-            document.getElementById('tab-dienst').classList.toggle('active-tab', tab === 'dienst');
-            document.getElementById('m-news').classList.toggle('active', tab === 'news');
-            document.getElementById('m-dienst').classList.toggle('active', tab === 'dienst');
-            if(tab === 'dienst') scrollDienst();
-        }
+    if(window.innerWidth > 800) return;
+    // Alle Boxen ausblenden
+    document.querySelectorAll('.content-box').forEach(b => b.classList.remove('active-tab'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    
+    // Gewählte Box einblenden
+    document.getElementById('tab-' + tab).classList.add('active-tab');
+    document.getElementById('m-' + tab).classList.add('active');
+    if(tab === 'dienst') scrollDienst();
+}
 
         let startX = 0;
         document.getElementById('swipeArea').addEventListener('touchstart', e => startX = e.touches[0].clientX);
@@ -196,13 +249,14 @@
         });
 
         async function loadData() {
-            try {
-                const res = await fetch(API_URL);
-                const data = await res.json();
-                renderNews(data.news);
-                renderDienst(data.dienste);
-            } catch (e) { console.error("Fehler"); }
-        }
+    try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        renderNews(data.news);
+        renderDienst(data.dienste);
+        renderReservierungen(data.reservierungen); // <--- HIER MUSS ES REIN!
+    } catch (e) { console.error("Fehler beim Laden:", e); }
+}
 
         function renderNews(news) {
             document.getElementById('news-container').innerHTML = news.map(n => `
@@ -241,6 +295,24 @@
             scrollDienst();
         }
 
+        function renderReservierungen(res) {
+    const body = document.getElementById('res-body');
+    body.innerHTML = res.map(r => `
+        <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding:10px;">${r.objekt}</td>
+            <td style="padding:10px;">${r.start.substring(8, 10)}.${r.start.substring(5, 7)}.</td>
+            <td style="padding:10px;">
+                <span style="padding:4px 8px; border-radius:4px; font-size:0.75rem; 
+                    ${r.status === 'Genehmigt' ? 'background:#d4edda; color:#155724;' : 
+                      r.status === 'Abgelehnt' ? 'background:#f8d7da; color:#721c24;' : 
+                      'background:#fff3cd; color:#856404;'}">
+                    ${r.status}
+                </span>
+            </td>
+        </tr>
+    `).join('');
+}
+        
         function scrollDienst() {
             setTimeout(() => {
                 const container = document.getElementById('tab-dienst');
@@ -262,6 +334,30 @@
             const saved = localStorage.getItem('theme-pref');
             if(saved) setTheme(saved); else setTheme('system');
         };
+
+        // Füge das zu deinen <script> Tags im HTML hinzu
+document.getElementById('res-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = {
+        name: document.getElementById('res-name').value,
+        objekt: document.getElementById('res-objekt').value,
+        grund: document.getElementById('res-grund').value,
+        start: document.getElementById('res-start').value,
+        ende: document.getElementById('res-ende').value,
+        mail: document.getElementById('res-mail').value
+    };
+
+    // Sende an die gleiche API-URL wie beim Laden der Daten
+    const res = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(formData)
+    });
+    
+    if(res.ok) {
+        alert("Antrag wurde an den Support gesendet!");
+        document.getElementById('res-form').reset();
+    }
+});
     </script>
 </body>
 </html>
