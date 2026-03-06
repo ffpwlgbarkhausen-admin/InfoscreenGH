@@ -335,9 +335,15 @@
             if(saved) setTheme(saved); else setTheme('system');
         };
 
-        // Füge das zu deinen <script> Tags im HTML hinzu
-document.getElementById('res-form').addEventListener('submit', async (e) => {
+       document.getElementById('res-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    // Visuelles Feedback für den Nutzer
+    const submitBtn = e.target.querySelector('button');
+    const originalText = submitBtn.innerText;
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Wird gesendet...";
+
     const formData = {
         name: document.getElementById('res-name').value,
         objekt: document.getElementById('res-objekt').value,
@@ -347,15 +353,31 @@ document.getElementById('res-form').addEventListener('submit', async (e) => {
         mail: document.getElementById('res-mail').value
     };
 
-    // Sende an die gleiche API-URL wie beim Laden der Daten
-    const res = await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(formData)
-    });
-    
-    if(res.ok) {
-        alert("Antrag wurde an den Support gesendet!");
+    try {
+        // 'no-cors' erlaubt das Senden der Daten, auch wenn Google 
+        // den Header nicht perfekt zurückgibt.
+        await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        // Da wir bei 'no-cors' keine Antwort lesen können, 
+        // gehen wir davon aus, dass es geklappt hat, wenn kein Fehler auftritt.
+        alert("Antrag wurde erfolgreich abgesendet!");
         document.getElementById('res-form').reset();
+
+    } catch (error) {
+        console.error("Fehler:", error);
+        alert("Senden fehlgeschlagen. Bitte Internetverbindung prüfen.");
+    } finally {
+        // Button wieder bereit machen
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalText;
     }
 });
     </script>
