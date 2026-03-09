@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - News</title>
+    <style>body { font-family: sans-serif; padding: 20px; }</style>
+</head>
+<body>
+    <h1>News verwalten</h1>
+    <input type="text" id="news-titel" placeholder="Titel"><br><br>
+    <textarea id="news-inhalt" placeholder="Inhalt"></textarea><br><br>
+    <select id="news-kat">
+        <option value="Info">Info</option>
+        <option value="Wichtig!">Wichtig!</option>
+    </select><br><br>
+    <button onclick="sendNews()">News veröffentlichen</button>
+
+    <script>
+        function sendNews() {
+            const data = {
+                titel: document.getElementById('news-titel').value,
+                inhalt: document.getElementById('news-inhalt').value,
+                kat: document.getElementById('news-kat').value
+            };
+            // Hier wird die Funktion im Code.gs aufgerufen
+            google.script.run.withSuccessHandler(() => alert("News gespeichert!"))
+                             .addNews(data);
+        }
+    </script>
+</body>
+</html>
