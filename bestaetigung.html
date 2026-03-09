@@ -4,37 +4,42 @@
     <meta charset="UTF-8">
     <title>Reservierung bestätigen</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; }
-        button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; }
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .btn-box { margin-top: 20px; }
+        button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; border-radius: 5px; border: none; }
+        #status { margin-top: 30px; font-weight: bold; color: #333; }
     </style>
 </head>
 <body>
     <h1>Reservierungs-Anfrage</h1>
-    <p>Bitte wähle eine Aktion aus:</p>
+    <p>Bitte bestätige deine Auswahl:</p>
     
-    <button onclick="updateStatus('Genehmigt')">Genehmigen</button>
-    <button onclick="updateStatus('Abgelehnt')">Ablehnen</button>
+    <div class="btn-box">
+        <button style="background-color: #28a745; color: white;" onclick="updateStatus('Genehmigt')">Genehmigen</button>
+        <button style="background-color: #dc3545; color: white;" onclick="updateStatus('Abgelehnt')">Ablehnen</button>
+    </div>
 
-    <p id="meldung"></p>
+    <div id="status"></div>
 
     <script>
         function updateStatus(action) {
             const params = new URLSearchParams(window.location.search);
             const row = params.get('row');
-            const meldung = document.getElementById('meldung');
+            const statusDiv = document.getElementById('status');
             
-            meldung.innerText = "Verarbeite...";
+            statusDiv.innerText = "Verarbeite Anfrage...";
 
-            // HIER DEINE EIGENE SCRIPT-URL EINFÜGEN (die ohne Header!)
+            // Deine API-URL ohne Header
             const url = "https://script.google.com/macros/s/AKfycbxG1DF4J8Yz-vcwT0dF7lnSrXxCbC1RRRp7aQWMA7GI3VJQ_7VUrGdBSKY4Y1JqfY_s/exec";
             
-            fetch(`${url}?row=${row}&action=${action}`, { method: 'GET' })
+            fetch(`${url}?row=${row}&action=${action}`)
                 .then(response => response.text())
-                .then(data => {
-                    meldung.innerHTML = "<strong>Status erfolgreich auf '" + action + "' gesetzt.</strong>";
+                .then(() => {
+                    statusDiv.innerHTML = "✅ Status erfolgreich auf <strong>" + action + "</strong> gesetzt.<br>Du kannst dieses Fenster jetzt schließen.";
                 })
                 .catch(err => {
-                    meldung.innerText = "Fehler: " + err;
+                    statusDiv.innerText = "Fehler: " + err;
+                    statusDiv.style.color = "red";
                 });
         }
     </script>
