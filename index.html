@@ -281,12 +281,46 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
 }
 
         function renderNews(news) {
-            document.getElementById('news-container').innerHTML = news.map(n => `
-                <div style="border-left:5px solid #5cb85c; padding:15px; background:var(--card-bg); margin-top:15px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <h3 style="margin:0; color:#B40404">${n.titel}</h3>
-                    <p style="margin:5px 0 0 0">${n.inhalt}</p>
-                </div>`).join('');
+    // 1. Sortier-Logik: "WichtigeInfo" kommt immer nach oben
+    const sortedNews = [...news].sort((a, b) => {
+        const katA = (a.kat || "").toLowerCase();
+        const katB = (b.kat || "").toLowerCase();
+        
+        // Prüfen, ob Kategorie "wichtigeinfo" ist
+        const istWichtigA = (katA === "wichtigeinfo");
+        const istWichtigB = (katB === "wichtigeinfo");
+
+        if (istWichtigA && !istWichtigB) return -1;
+        if (!istWichtigA && istWichtigB) return 1;
+        return 0;
+    });
+
+    // 2. Anzeige-Logik
+    document.getElementById('news-container').innerHTML = sortedNews.map(n => {
+        const kat = (n.kat || "info");
+        const katLower = kat.toLowerCase();
+        
+        // Farben und Design basierend auf deinen zwei Kategorien
+        let farbe = "#012796"; // Blau für Info
+        let blinkClass = "";
+        let icon = "";
+
+        if (katLower === "wichtigeinfo") {
+            farbe = "#B40404"; // Rot für WichtigeInfo
+            blinkClass = "blink"; 
+            icon = "🚨 ";
         }
+
+        return `
+            <div style="border-left:8px solid ${farbe}; padding:15px; background:var(--card-bg); margin-top:15px; border-radius:8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <h3 style="margin:0; color:${farbe}" class="${blinkClass}">${icon}${n.titel}</h3>
+                    <span style="font-size: 0.65rem; font-weight: bold; text-transform: uppercase; opacity: 0.6; background: #eee; padding: 2px 5px; border-radius: 4px;">${kat}</span>
+                </div>
+                <p style="margin:8px 0 0 0; line-height: 1.4;">${n.inhalt}</p>
+            </div>`;
+    }).join('');
+}
 
         function renderDienst(dienste) {
     const heute = new Date(); 
