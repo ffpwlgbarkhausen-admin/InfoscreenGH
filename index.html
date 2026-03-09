@@ -267,34 +267,46 @@
         }
 
         function renderDienst(dienste) {
-            const heute = new Date(); heute.setHours(0,0,0,0);
-            let nextFound = false;
-            let html = `<table style="width:100%; border-collapse:collapse;">`;
+    const heute = new Date(); 
+    heute.setHours(0,0,0,0);
+    let nextFound = false;
+    let html = `<table style="width:100%; border-collapse:collapse;">`;
+    
+    dienste.forEach(d => {
+        const dObj = new Date(d.datum);
+        const isNext = (!nextFound && dObj >= heute);
+        if(isNext) nextFound = true;
+        
+        // --- ZEITKORREKTUR START ---
+        let timeStr = formatUhrzeit(d.uhrzeit);
+        if (timeStr !== "--:--" && timeStr.includes(':')) {
+            let parts = timeStr.split(':');
+            let stunden = parseInt(parts[0], 10);
+            let minuten = parts[1];
             
-            dienste.forEach(d => {
-                const dObj = new Date(d.datum);
-                const isNext = (!nextFound && dObj >= heute);
-                if(isNext) nextFound = true;
-                
-                const timeStr = formatUhrzeit(d.uhrzeit);
-                const dateStr = dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
-                
-                html += `<tr ${isNext ? 'id="next-row" style="background:rgba(255,214,0,0.15); border-left:5px solid #FFD600"' : ''} style="border-bottom:1px solid var(--border-color)">
-                    <td style="padding:15px; font-weight:bold; color:#B40404; white-space:nowrap;">${dateStr}<br><span style="color:var(--text-main); font-size:0.8rem">${timeStr} Uhr</span></td>
-                    <td style="padding:15px">
-    <strong>${d.thema}</strong><br>
-    <small style="color:var(--text-main); opacity: 0.9;">
-        ${d.kleidung ? `<span style="color:#B40404; font-weight:bold;">👕 ${d.kleidung}</span>` : ''}
-        ${d.kleidung && d.leitung ? ' | ' : ''}
-        <span>${d.leitung}</span>
-    </small>
-</td>
-                </tr>`;
-            });
-            document.getElementById('dienst-container').innerHTML = html + "</table>";
-            scrollDienst();
+            // Eine Stunde addieren (24h Modulo sorgt dafür, dass aus 23:00 -> 00:00 wird)
+            stunden = (stunden + 1) % 24;
+            timeStr = String(stunden).padStart(2, '0') + ":" + minuten;
         }
+        // --- ZEITKORREKTUR ENDE ---
 
+        const dateStr = dObj.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'});
+        
+        html += `<tr ${isNext ? 'id="next-row" style="background:rgba(255,214,0,0.15); border-left:5px solid #FFD600"' : ''} style="border-bottom:1px solid var(--border-color)">
+            <td style="padding:15px; font-weight:bold; color:#B40404; white-space:nowrap;">${dateStr}<br><span style="color:var(--text-main); font-size:0.8rem">${timeStr} Uhr</span></td>
+            <td style="padding:15px">
+                <strong>${d.thema}</strong><br>
+                <small style="color:var(--text-main); opacity: 0.9;">
+                    ${d.kleidung ? `<span style="color:#B40404; font-weight:bold;">👕 ${d.kleidung}</span>` : ''}
+                    ${d.kleidung && d.leitung ? ' | ' : ''}
+                    <span>${d.leitung}</span>
+                </small>
+            </td>
+        </tr>`;
+    });
+    document.getElementById('dienst-container').innerHTML = html + "</table>";
+    scrollDienst();
+}
         function renderReservierungen(res) {
     const body = document.getElementById('res-body');
     body.innerHTML = res.map(r => `
