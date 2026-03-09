@@ -32,15 +32,19 @@
             // Deine API-URL ohne Header
             const url = "https://script.google.com/macros/s/AKfycbxG1DF4J8Yz-vcwT0dF7lnSrXxCbC1RRRp7aQWMA7GI3VJQ_7VUrGdBSKY4Y1JqfY_s/exec";
             
-            fetch(`${url}?row=${row}&action=${action}`)
-                .then(response => response.text())
-                .then(() => {
-                    statusDiv.innerHTML = "✅ Status erfolgreich auf <strong>" + action + "</strong> gesetzt.<br>Du kannst dieses Fenster jetzt schließen.";
-                })
-                .catch(err => {
-                    statusDiv.innerText = "Fehler: " + err;
-                    statusDiv.style.color = "red";
-                });
+            fetch(`${url}?row=${row}&action=${action}`, { 
+    method: 'GET',
+    mode: 'no-cors' 
+})
+.then(() => {
+    // Da no-cors den Inhalt der Antwort verbirgt, gehen wir davon aus, 
+    // dass der Klick erfolgreich war.
+    statusDiv.innerHTML = "✅ Anfrage wurde gesendet.<br>Bitte prüfe dein Sheet oder schließe das Fenster.";
+})
+.catch(err => {
+    statusDiv.innerText = "Fehler: " + err;
+    statusDiv.style.color = "red";
+});
         }
     </script>
 </body>
