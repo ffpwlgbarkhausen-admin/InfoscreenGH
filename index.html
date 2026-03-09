@@ -128,7 +128,7 @@
         <button onclick="toggleMenu()" style="width:100%; padding:12px; background:#B40404; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Schließen</button>
     </div>
 
-    <div class="header-container">
+    <div class="header-container" onclick="location.reload()" style="cursor: pointer;">
         <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" onclick="manualRefresh()" alt="Logo"></div>
         <div class="header-center">Löschgruppenführung Barkhausen</div>
         <div class="header-right">
@@ -281,14 +281,14 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
 }
 
         function renderNews(news) {
-    // 1. Sortier-Logik: "WichtigeInfo" kommt immer nach oben
+    // 1. Sortier-Logik: "Wichtig!" kommt immer nach oben
     const sortedNews = [...news].sort((a, b) => {
         const katA = (a.kat || "").toLowerCase();
         const katB = (b.kat || "").toLowerCase();
         
         // Prüfen, ob Kategorie "wichtigeinfo" ist
-        const istWichtigA = (katA === "wichtigeinfo");
-        const istWichtigB = (katB === "wichtigeinfo");
+        const istWichtigA = (katA === "Wichtig!");
+        const istWichtigB = (katB === "Wichtig!");
 
         if (istWichtigA && !istWichtigB) return -1;
         if (!istWichtigA && istWichtigB) return 1;
@@ -305,8 +305,8 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
         let blinkClass = "";
         let icon = "";
 
-        if (katLower === "wichtigeinfo") {
-            farbe = "#B40404"; // Rot für WichtigeInfo
+        if (katLower === "Wichtig!") {
+            farbe = "#B40404"; // Rot für Wichtig!
             blinkClass = "blink"; 
             icon = "🚨 ";
         }
@@ -446,6 +446,22 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
         // Button wieder bereit machen
         submitBtn.disabled = false;
         submitBtn.innerText = originalText;
+    }
+});
+
+        // --- NEU: PULL-TO-REFRESH ---
+let touchStartY = 0;
+
+document.getElementById('swipeArea').addEventListener('touchstart', e => {
+    touchStartY = e.touches[0].clientY;
+});
+
+document.getElementById('swipeArea').addEventListener('touchend', e => {
+    let diffY = e.changedTouches[0].clientY - touchStartY;
+    
+    // Wenn man mehr als 150px nach unten wischt, Seite neu laden
+    if (diffY > 150) {
+        location.reload();
     }
 });
     </script>
