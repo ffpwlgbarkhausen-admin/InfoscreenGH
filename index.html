@@ -281,14 +281,15 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
 }
 
         function renderNews(news) {
-    // 1. Sortier-Logik: "Wichtig!" kommt immer nach oben
+    // 1. Sortier-Logik
     const sortedNews = [...news].sort((a, b) => {
+        // Hier konsequent alles in Kleinbuchstaben
         const katA = (a.kat || "").toLowerCase();
         const katB = (b.kat || "").toLowerCase();
         
-        // Prüfen, ob Kategorie "wichtigeinfo" ist
-        const istWichtigA = (katA === "Wichtig!");
-        const istWichtigB = (katB === "Wichtig!");
+        // Vergleich mit kleingeschriebener Version
+        const istWichtigA = (katA === "wichtig!");
+        const istWichtigB = (katB === "wichtig!");
 
         if (istWichtigA && !istWichtigB) return -1;
         if (!istWichtigA && istWichtigB) return 1;
@@ -297,15 +298,15 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
 
     // 2. Anzeige-Logik
     document.getElementById('news-container').innerHTML = sortedNews.map(n => {
-        const kat = (n.kat || "info");
-        const katLower = kat.toLowerCase();
+        const kat = (n.kat || "Info");
+        const katLower = kat.toLowerCase(); // Alles in Kleinbuchstaben für den Check
         
-        // Farben und Design basierend auf deinen zwei Kategorien
         let farbe = "#012796"; // Blau für Info
         let blinkClass = "";
         let icon = "";
 
-        if (katLower === "Wichtig!") {
+        // Vergleich mit "wichtig!" (klein)
+        if (katLower === "wichtig!") {
             farbe = "#B40404"; // Rot für Wichtig!
             blinkClass = "blink"; 
             icon = "🚨 ";
@@ -321,7 +322,6 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
             </div>`;
     }).join('');
 }
-
         function renderDienst(dienste) {
     const heute = new Date(); 
     heute.setHours(0,0,0,0);
