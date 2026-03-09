@@ -242,11 +242,33 @@
 }
 
         let startX = 0;
-        document.getElementById('swipeArea').addEventListener('touchstart', e => startX = e.touches[0].clientX);
-        document.getElementById('swipeArea').addEventListener('touchend', e => {
-            let diff = startX - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 70) showTab(diff > 0 ? 'dienst' : 'news');
-        });
+// Die Reihenfolge, in der die Tabs beim Wischen erscheinen sollen
+const tabs = ['news', 'dienst', 'formular']; 
+
+document.getElementById('swipeArea').addEventListener('touchstart', e => startX = e.touches[0].clientX);
+
+document.getElementById('swipeArea').addEventListener('touchend', e => {
+    let diff = startX - e.changedTouches[0].clientX;
+    
+    // Nur reagieren, wenn die Wischbewegung weit genug war (70 Pixel)
+    if (Math.abs(diff) > 70) {
+        // 1. Herausfinden, welcher Tab gerade aktiv ist
+        const activeNav = document.querySelector('.nav-item.active');
+        if (!activeNav) return;
+        
+        const currentTabId = activeNav.id.replace('m-', '');
+        let currentIndex = tabs.indexOf(currentTabId);
+
+        // 2. Logik für das Weiterschalten
+        if (diff > 0 && currentIndex < tabs.length - 1) {
+            // Nach links wischen -> Zeige den nächsten Tab rechts
+            showTab(tabs[currentIndex + 1]);
+        } else if (diff < 0 && currentIndex > 0) {
+            // Nach rechts wischen -> Zeige den vorherigen Tab links
+            showTab(tabs[currentIndex - 1]);
+        }
+    }
+});
 
         async function loadData() {
     try {
