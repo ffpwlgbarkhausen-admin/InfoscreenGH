@@ -151,7 +151,7 @@
                 <span id="datum-header">05.03.2026</span>
                 <span id="uhrzeit">14:42</span>
             </div>
-            <div class="menu-trigger" onclick="toggleMenu()">☰</div>
+            <div class="menu-trigger" onclick="toggleMenu(event)">☰</div>
         </div>
     </div>
 
@@ -229,10 +229,18 @@
     setInterval(updateTime, 1000);
     setInterval(loadData, 600000); // 10 Min Refresh
 
-        function toggleMenu() {
-            const open = document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').style.display = open ? 'block' : 'none';
-        }
+        function toggleMenu(event) {
+    // Verhindert, dass der Klick das location.reload() des Headers auslöst
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const open = sidebar.classList.toggle('open');
+    
+    overlay.style.display = open ? 'block' : 'none';
+}
 
         function setTheme(t) {
             if(t === 'system') {
