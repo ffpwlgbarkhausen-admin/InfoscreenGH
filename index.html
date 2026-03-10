@@ -127,12 +127,21 @@
 
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     <div id="sidebar" class="sidebar">
-        <h2 style="border:none; position:static; height:auto; line-height:normal; padding:0; margin-bottom:20px;">Einstellungen</h2>
-        <button onclick="setTheme('light')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer;">☀️ Hell</button>
-        <button onclick="setTheme('dark')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer;">🌙 Dunkel</button>
-        <button onclick="setTheme('system')" style="width:100%; padding:12px; margin-bottom:25px; cursor:pointer;">🖥️ System</button>
-        <button onclick="toggleMenu()" style="width:100%; padding:12px; background:#B40404; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Schließen</button>
-    </div>
+    <h2 style="border:none; position:static; height:auto; line-height:normal; padding:0; margin-bottom:20px;">Menü</h2>
+    
+    <button onclick="setTheme('light')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer;">☀️ Hell</button>
+    <button onclick="setTheme('dark')" style="width:100%; padding:12px; margin-bottom:10px; cursor:pointer;">🌙 Dunkel</button>
+    <button onclick="setTheme('system')" style="width:100%; padding:12px; margin-bottom:25px; cursor:pointer;">🖥️ System</button>
+    
+    <hr style="border: 0; border-top: 1px solid #ddd; margin-bottom: 20px;">
+
+    <button onclick="openAdmin()" 
+        style="width:100%; padding:12px; margin-bottom:25px; cursor:pointer; background:#f0f0f0; border:1px solid #ccc; font-weight:bold;">
+    ⚙️ Adminbereich
+</button>
+
+    <button onclick="toggleMenu()" style="width:100%; padding:12px; background:#B40404; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Schließen</button>
+</div>
 
     <div class="header-container" onclick="location.reload()" style="cursor: pointer;">
         <div class="header-left"><img src="Logo-redesign-LG13-removebg-preview.png" onclick="manualRefresh()" alt="Logo"></div>
@@ -202,15 +211,23 @@
     </div>
  
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxG1DF4J8Yz-vcwT0dF7lnSrXxCbC1RRRp7aQWMA7GI3VJQ_7VUrGdBSKY4Y1JqfY_s/exec?page=data";
+        // Zentral definierte Basis-URL für alle Aufrufe
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbxG1DF4J8Yz-vcwT0dF7lnSrXxCbC1RRRp7aQWMA7GI3VJQ_7VUrGdBSKY4Y1JqfY_s/exec";
+    const API_URL = BASE_URL + "?page=data";
 
-        function updateTime() {
-            const jetzt = new Date();
-            document.getElementById("uhrzeit").innerHTML = `${String(jetzt.getHours()).padStart(2, '0')}<span class="blink">:</span>${String(jetzt.getMinutes()).padStart(2, '0')}`;
-            document.getElementById("datum-header").innerHTML = jetzt.toLocaleDateString('de-DE');
-        }
-        setInterval(updateTime, 1000);
-        setInterval(loadData, 600000); // 10 Min Refresh
+    // Funktion für den Admin-Button (wird im HTML aufgerufen)
+    function openAdmin() {
+        window.open(BASE_URL + "?page=admin", '_blank');
+    }
+
+    function updateTime() {
+        const jetzt = new Date();
+        document.getElementById("uhrzeit").innerHTML = `${String(jetzt.getHours()).padStart(2, '0')}<span class="blink">:</span>${String(jetzt.getMinutes()).padStart(2, '0')}`;
+        document.getElementById("datum-header").innerHTML = jetzt.toLocaleDateString('de-DE');
+    }
+    
+    setInterval(updateTime, 1000);
+    setInterval(loadData, 600000); // 10 Min Refresh
 
         function toggleMenu() {
             const open = document.getElementById('sidebar').classList.toggle('open');
