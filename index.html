@@ -373,7 +373,10 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
     const body = document.getElementById('res-body');
     body.innerHTML = res.map(r => `
         <tr style="border-bottom: 1px solid var(--border-color);">
-            <td style="padding:10px;">${r.objekt}</td>
+            <td style="padding:10px;">
+                <div style="font-weight: bold;">${r.objekt}</div>
+                <div style="font-size: 0.75rem; color: #666;">${r.name || ''}</div>
+            </td>
             <td style="padding:10px;">${r.start.substring(8, 10)}.${r.start.substring(5, 7)}.</td>
             <td style="padding:10px;">
                 <span style="padding:4px 8px; border-radius:4px; font-size:0.75rem; 
