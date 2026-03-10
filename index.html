@@ -74,16 +74,18 @@
             border-bottom: 1px solid var(--border-color);
         }
         
-        /* MOBILE NAV */
+        /* MOBILE NAV - Standardzustand (auf Desktop unsichtbar) */
 .mobile-nav { 
-    display: none; height: 70px; flex-shrink: 0;
-    background: var(--header-bg); border-top: 2px solid var(--border-color);
-    display: flex; /* Überschreibt das bisherige 'display: none' für die Anzeige */
-    flex-direction: row; /* Sicherstellen, dass sie nebeneinander liegen */
+    display: none; 
+    height: 70px; 
+    flex-shrink: 0;
+    background: var(--header-bg); 
+    border-top: 2px solid var(--border-color);
+    flex-direction: row; 
 }
 
 .nav-item { 
-    flex: 1; /* Das teilt den Platz gleichmäßig auf (33,3% pro Element) */
+    flex: 1; 
     height: 100%; 
     display: flex; 
     flex-direction: column; 
@@ -92,7 +94,7 @@
     color: #888; 
     cursor: pointer; 
     font-weight: bold; 
-    font-size: 0.75rem; /* Etwas kleiner, damit der Text nicht umbricht */
+    font-size: 0.75rem; 
     text-align: center;
 }
 
@@ -100,21 +102,25 @@
     color: #B40404; 
     background: rgba(180, 4, 4, 0.05); 
 }
-        @media (max-width: 800px) {
-            .kiosk-links { display: none !important; } /* Versteckt Buttons mobil */
-            .header-container { height: 70px; padding: 0 10px; }
-            .header-left img { height: 45px; }
-            .header-center { font-size: 14px; }
-            .header-right { flex: 0 0 50px; }
-            #uhr-display { display: none; }
-            .mobile-nav { display: flex; }
-            .content-box { display: none; }
-            .active-tab { display: flex !important; width: 100% !important; }
-            .content-container { padding: 10px; }
-        }
 
-        .blink { animation: blinker 1s linear infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
+/* RESPONSIVE DESIGN */
+@media (max-width: 800px) {
+    .kiosk-links { display: none !important; } 
+    .header-container { height: 70px; padding: 0 10px; }
+    .header-left img { height: 45px; }
+    .header-center { font-size: 14px; }
+    .header-right { flex: 0 0 50px; }
+    #uhr-display { display: none; }
+    
+    /* Mobil: Navigation und aktive Tabs einblenden */
+    .mobile-nav { display: flex !important; }
+    .content-box { display: none; }
+    .active-tab { display: flex !important; width: 100% !important; }
+    .content-container { padding: 10px; }
+}
+
+.blink { animation: blinker 1s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
