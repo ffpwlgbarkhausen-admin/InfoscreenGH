@@ -2,30 +2,133 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Admin - News</title>
-    <style>body { font-family: sans-serif; padding: 20px; }</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin-Panel Barkhausen</title>
+    <style>
+        :root {
+            --primary: #B40404;
+            --bg: #f4f4f9;
+            --card: #ffffff;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        h2 { margin-top: 30px; font-size: 1.2rem; color: #555; }
+        
+        /* Karten-Design */
+        .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
+        /* Formulare */
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; margin-top: 10px; }
+        
+        .btn-save { background: var(--primary); color: white; }
+        .btn-save:hover { background: #8e0303; }
+        
+        .btn-approve { background: #28a745; color: white; margin-right: 5px; width: 48%; }
+        .btn-reject { background: #dc3545; color: white; width: 48%; }
+
+        /* Listen-Elemente */
+        .list-item { border-left: 4px solid var(--primary); padding: 15px; background: #fafafa; margin-bottom: 10px; border-radius: 4px; position: relative; }
+        .status-tag { font-size: 0.7rem; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; }
+        
+        .loader { text-align: center; color: #888; font-style: italic; }
+    </style>
 </head>
 <body>
-    <h1>News verwalten</h1>
-    <input type="text" id="news-titel" placeholder="Titel"><br><br>
-    <textarea id="news-inhalt" placeholder="Inhalt"></textarea><br><br>
-    <select id="news-kat">
-        <option value="Info">Info</option>
-        <option value="Wichtig!">Wichtig!</option>
-    </select><br><br>
-    <button onclick="sendNews()">News veröffentlichen</button>
 
-    <script>
-        function sendNews() {
-            const data = {
-                titel: document.getElementById('news-titel').value,
-                inhalt: document.getElementById('news-inhalt').value,
-                kat: document.getElementById('news-kat').value
-            };
-            // Hier wird die Funktion im Code.gs aufgerufen
-            google.script.run.withSuccessHandler(() => alert("News gespeichert!"))
-                             .addNews(data);
+<div class="container">
+    <h1>Verwaltung Barkhausen</h1>
+
+    <div class="card">
+        <h2>📢 Neue Nachricht einstellen</h2>
+        <input type="text" id="news-titel" placeholder="Titel der Nachricht (z.B. Osterfeuer 2026)">
+        <textarea id="news-inhalt" rows="3" placeholder="Inhalt der Nachricht..."></textarea>
+        <select id="news-kat">
+            <option value="info">Info (Blau)</option>
+            <option value="wichtig">Wichtig (Gelb/Blinkend)</option>
+            <option value="alarm">Einsatz (Rot)</option>
+        </select>
+        <button class="btn-save" onclick="saveNews()">Nachricht veröffentlichen</button>
+    </div>
+
+    <div class="card">
+        <h2>📅 Offene Reservierungen</h2>
+        <div id="admin-res-list" class="loader">Lade Anfragen...</div>
+    </div>
+
+    <div class="card">
+        <h2>📝 Aktuelle News auf dem Screen</h2>
+        <div id="admin-news-list" class="loader">Lade News-Übersicht...</div>
+    </div>
+</div>
+
+<script>
+    // Beim Start alles laden
+    window.onload = function() {
+        refreshData();
+    };
+
+    function refreshData() {
+        google.script.run.withSuccessHandler(displayAdminData).getJsonDataForAdmin();
+    }
+
+    function displayAdminData(jsonString) {
+        const data = JSON.parse(jsonString);
+        
+        // 1. Reservierungen rendern
+        const resContainer = document.getElementById('admin-res-list');
+        const offene = data.reservierungen.filter(r => r.status === 'Offen');
+        
+        if (offene.length === 0) {
+            resContainer.innerHTML = "Keine neuen Anfragen.";
+        } else {
+            resContainer.innerHTML = offene.map((r, i) => `
+                <div class="list-item">
+                    <strong>${r.name}</strong>: ${r.objekt}<br>
+                    <small>${r.start} bis ${r.ende}</small><br>
+                    <div style="margin-top:10px;">
+                        <button class="btn-approve" onclick="updateRes(${i}, 'Genehmigt')">✔ OK</button>
+                        <button class="btn-reject" onclick="updateRes(${i}, 'Abgelehnt')">✖ Ablehnen</button>
+                    </div>
+                </div>
+            `).join('');
         }
-    </script>
+
+        // 2. News-Liste rendern (zum Kontrollieren)
+        const newsContainer = document.getElementById('admin-news-list');
+        newsContainer.innerHTML = data.news.map(n => `
+            <div class="list-item" style="border-left-color: #ddd;">
+                <strong>${n.titel}</strong> <span class="status-tag">${n.kat}</span><br>
+                <small>${n.inhalt.substring(0, 50)}...</small>
+            </div>
+        `).reverse().join(''); // Neueste News oben
+    }
+
+    function saveNews() {
+        const payload = {
+            titel: document.getElementById('news-titel').value,
+            inhalt: document.getElementById('news-inhalt').value,
+            kat: document.getElementById('news-kat').value
+        };
+        
+        if(!payload.titel) return alert("Bitte Titel eingeben!");
+
+        google.script.run.withSuccessHandler(() => {
+            alert("News veröffentlicht!");
+            document.getElementById('news-titel').value = "";
+            document.getElementById('news-inhalt').value = "";
+            refreshData();
+        }).addNews(payload);
+    }
+
+    function updateRes(idx, status) {
+        google.script.run.withSuccessHandler(() => {
+            alert("Status auf " + status + " gesetzt.");
+            refreshData();
+        }).updateReservierungStatus(idx, status);
+    }
+</script>
+
 </body>
 </html>
