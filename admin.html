@@ -80,17 +80,33 @@
     }
 
     async function saveNews() {
-        const data = {
-            action: "addNews",
-            titel: document.getElementById('news-titel').value,
-            inhalt: document.getElementById('news-inhalt').value,
-            kat: document.getElementById('news-kat').value,
-            foto: document.getElementById('news-foto').value
-        };
-        await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-        alert("News gespeichert!");
-        refreshData();
-    }
+    // 1. Dein GitHub Basis-Pfad
+    const GITHUB_BASE = "https://raw.githubusercontent.com/ffpwlgbarkhausen-admin/InfoscreenGH/main/bilder/";
+    
+    // 2. Den Dateinamen aus dem Eingabefeld holen
+    const fileName = document.getElementById('news-foto').value.trim();
+    
+    // 3. Den vollständigen Link zusammenbauen, falls ein Name eingegeben wurde
+    const fullUrl = fileName ? GITHUB_BASE + fileName : "";
+
+    const data = {
+        action: "addNews",
+        titel: document.getElementById('news-titel').value,
+        inhalt: document.getElementById('news-inhalt').value,
+        kat: document.getElementById('news-kat').value,
+        foto: fullUrl // Hier wird jetzt der fertige, funktionierende Link gespeichert
+    };
+    
+    await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+    alert("News gespeichert!");
+    
+    // Felder leeren für die nächste News
+    document.getElementById('news-titel').value = "";
+    document.getElementById('news-inhalt').value = "";
+    document.getElementById('news-foto').value = "";
+    
+    refreshData();
+}
 
     async function updateRes(idx, status) {
         await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateRes', row: idx, status: status }) });
