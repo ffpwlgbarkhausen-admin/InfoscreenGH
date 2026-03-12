@@ -217,8 +217,10 @@
 
     // Funktion für den Admin-Button (wird im HTML aufgerufen)
     function openAdmin() {
-        window.open(BASE_URL + "?page=admin", '_blank');
-    }
+    // Wir rufen direkt die Seite auf GitHub auf, nicht über das Google Script
+    const githubAdminUrl = "https://ffpwlgbarkhausen-admin.github.io/InfoscreenGH/admin.html";
+    window.open(githubAdminUrl, '_blank');
+}
 
     function updateTime() {
         const jetzt = new Date();
