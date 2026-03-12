@@ -1,33 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin-Panel Barkhausen</title>
     <script src="config.js"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; }
+        body { font-family: 'Montserrat', sans-serif; background: #f4f4f4; padding: 20px; color: #333; }
         .container { max-width: 600px; margin: auto; }
-        .list-item { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
-        button { cursor: pointer; margin-top: 5px; }
+        .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .list-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        button { cursor: pointer; padding: 10px 15px; border: none; border-radius: 6px; background: #012796; color: white; margin-top: 5px; }
+        .btn-del { background: #B40404; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Verwaltung Barkhausen</h1>
-    
-    <h2>Offene Reservierungen</h2>
-    <div id="admin-res-list">Lade Reservierungen...</div>
+    <h1>⚙️ Verwaltung Barkhausen</h1>
 
-    <h2>News verwalten</h2>
-    <div id="admin-news-list">Lade News...</div>
+    <div class="card">
+        <h2>📢 Neue News veröffentlichen</h2>
+        <input type="text" id="news-titel" placeholder="Titel der News">
+        <textarea id="news-inhalt" placeholder="Inhalt"></textarea>
+        <select id="news-kat">
+            <option value="Info">Info</option>
+            <option value="Wichtig!">Wichtig!</option>
+        </select>
+        <input type="text" id="news-foto" placeholder="Link zum Foto (URL einfügen)">
+        <button onclick="saveNews()">News speichern</button>
+    </div>
+
+    <div class="card">
+        <h2>📅 Offene Reservierungen</h2>
+        <div id="admin-res-list">Lade Reservierungen...</div>
+    </div>
+
+    <div class="card">
+        <h2>📰 Bestehende News</h2>
+        <div id="admin-news-list">Lade News...</div>
+    </div>
 </div>
 
 <script>
-    // URL aus der Config
     const URL = CONFIG.BASE_URL;
-
     window.onload = refreshData;
 
     async function refreshData() {
@@ -35,53 +52,54 @@
             const res = await fetch(URL + "?page=adminData");
             const data = await res.json();
             displayAdminData(data);
-        } catch (e) {
-            console.error("Fehler beim Laden:", e);
-        }
+        } catch (e) { console.error("Fehler beim Laden:", e); }
     }
 
     function displayAdminData(data) {
-        // 1. Reservierungen
+        // Reservierungen
         const resContainer = document.getElementById('admin-res-list');
         const offene = data.reservierungen.filter(r => r.status === 'Offen');
-        
-        resContainer.innerHTML = offene.length === 0 ? "<p style='color:green;'>Alles erledigt!</p>" : 
+        resContainer.innerHTML = offene.length === 0 ? "<p>Alles erledigt!</p>" : 
             offene.map((r, i) => `
                 <div class="list-item">
                     <strong>${r.name}</strong> (${r.objekt})<br>
                     <button onclick="updateRes(${i}, 'Genehmigt')">✔ Genehmigen</button>
-                    <button onclick="updateRes(${i}, 'Abgelehnt')">✖ Ablehnen</button>
+                    <button onclick="updateRes(${i}, 'Abgelehnt')" class="btn-del">✖ Ablehnen</button>
                 </div>
             `).join('');
 
-        // 2. News
+        // News
         const newsContainer = document.getElementById('admin-news-list');
         newsContainer.innerHTML = data.news.map((n, i) => `
             <div class="list-item">
                 <strong>${n.titel}</strong><br>
                 <small>${n.inhalt}</small><br>
-                <button onclick="deleteNews(${i})">🗑️ Löschen</button>
+                <button onclick="deleteNews(${i})" class="btn-del">🗑️ Löschen</button>
             </div>
         `).join('');
     }
 
+    async function saveNews() {
+        const data = {
+            action: "addNews",
+            titel: document.getElementById('news-titel').value,
+            inhalt: document.getElementById('news-inhalt').value,
+            kat: document.getElementById('news-kat').value,
+            foto: document.getElementById('news-foto').value
+        };
+        await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+        alert("News gespeichert!");
+        refreshData();
+    }
+
     async function updateRes(idx, status) {
-        // HINWEIS: Content-Type Header entfernt für no-cors Stabilität
-        await fetch(URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({ action: 'updateRes', row: idx, status: status })
-        });
+        await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateRes', row: idx, status: status }) });
         alert("Status aktualisiert");
         refreshData();
     }
 
     async function deleteNews(idx) {
-        await fetch(URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({ action: 'deleteNews', index: idx })
-        });
+        await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'deleteNews', index: idx }) });
         alert("News gelöscht");
         refreshData();
     }
