@@ -6,75 +6,85 @@
     <title>Admin-Panel Barkhausen</title>
     <script src="config.js"></script>
     <style>
-        /* ... Dein CSS bleibt gleich ... */
+        body { font-family: sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        .list-item { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        button { cursor: pointer; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Verwaltung Barkhausen</h1>
-    <div id="admin-res-list" class="loader">Lade Anfragen...</div>
+    
+    <h2>Offene Reservierungen</h2>
+    <div id="admin-res-list">Lade Reservierungen...</div>
+
+    <h2>News verwalten</h2>
+    <div id="admin-news-list">Lade News...</div>
 </div>
 
 <script>
-    // Die URL kommt nun aus der config.js
+    // URL aus der Config
     const URL = CONFIG.BASE_URL;
 
     window.onload = refreshData;
 
     async function refreshData() {
-        // GET-Request an dein Google-Backend
-        const res = await fetch(URL + "?page=adminData");
-        const data = await res.json();
-        displayAdminData(data);
-    }
-
-    function displayAdminData(data) {
-        const resContainer = document.getElementById('admin-res-list');
-        const offene = data.reservierungen.filter(r => r.status === 'Offen');
-        
-        if (offene.length === 0) {
-            resContainer.innerHTML = "<p style='color:green;'>Alles erledigt!</p>";
-        } else {
-            resContainer.innerHTML = offene.map((r, i) => `
-                <div class="list-item">
-                    <strong>${r.name}</strong> (${r.objekt})<br>
-                    <button class="btn-approve" onclick="updateRes(${i}, 'Genehmigt')">✔ Genehmigen</button>
-                    <button class="btn-reject" onclick="updateRes(${i}, 'Abgelehnt')">✖ Ablehnen</button>
-                </div>
-            `).join('');
+        try {
+            const res = await fetch(URL + "?page=adminData");
+            const data = await res.json();
+            displayAdminData(data);
+        } catch (e) {
+            console.error("Fehler beim Laden:", e);
         }
     }
 
+    function displayAdminData(data) {
+        // 1. Reservierungen
+        const resContainer = document.getElementById('admin-res-list');
+        const offene = data.reservierungen.filter(r => r.status === 'Offen');
+        
+        resContainer.innerHTML = offene.length === 0 ? "<p style='color:green;'>Alles erledigt!</p>" : 
+            offene.map((r, i) => `
+                <div class="list-item">
+                    <strong>${r.name}</strong> (${r.objekt})<br>
+                    <button onclick="updateRes(${i}, 'Genehmigt')">✔ Genehmigen</button>
+                    <button onclick="updateRes(${i}, 'Abgelehnt')">✖ Ablehnen</button>
+                </div>
+            `).join('');
+
+        // 2. News
+        const newsContainer = document.getElementById('admin-news-list');
+        newsContainer.innerHTML = data.news.map((n, i) => `
+            <div class="list-item">
+                <strong>${n.titel}</strong><br>
+                <small>${n.inhalt}</small><br>
+                <button onclick="deleteNews(${i})">🗑️ Löschen</button>
+            </div>
+        `).join('');
+    }
+
     async function updateRes(idx, status) {
-        // POST-Request zum Backend senden
+        // HINWEIS: Content-Type Header entfernt für no-cors Stabilität
         await fetch(URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ action: 'update', row: idx, status: status })
+            body: JSON.stringify({ action: 'updateRes', row: idx, status: status })
         });
         alert("Status aktualisiert");
         refreshData();
     }
-    
-    async function saveNews() {
-    const data = {
-        action: "addNews", // <--- WICHTIG: Das steuert dein doPost!
-        titel: document.getElementById('news-titel').value,
-        inhalt: document.getElementById('news-inhalt').value,
-        kat: document.getElementById('news-kat').value
-    };
-    
-    await fetch(CONFIG.BASE_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-    });
-    alert("News gespeichert!");
-    refreshData();
-}
+
+    async function deleteNews(idx) {
+        await fetch(URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ action: 'deleteNews', index: idx })
+        });
+        alert("News gelöscht");
+        refreshData();
+    }
 </script>
 </body>
 </html>
