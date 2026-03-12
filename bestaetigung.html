@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Reservierung bestätigen</title>
+    <script src="config.js"></script>
     <style>
         body { font-family: sans-serif; text-align: center; padding-top: 50px; }
         .btn-box { margin-top: 20px; }
@@ -29,22 +30,22 @@
             
             statusDiv.innerText = "Verarbeite Anfrage...";
 
-            // Deine API-URL ohne Header
-            const url = "https://script.google.com/macros/s/AKfycbxG1DF4J8Yz-vcwT0dF7lnSrXxCbC1RRRp7aQWMA7GI3VJQ_7VUrGdBSKY4Y1JqfY_s/exec";
+            // 2. URL aus der zentralen config.js holen
+            const url = CONFIG.BASE_URL;
             
+            // Aufruf via GET (wie in deinem Code.gs vorgesehen)
             fetch(`${url}?row=${row}&action=${action}`, { 
-    method: 'GET',
-    mode: 'no-cors' 
-})
-.then(() => {
-    // Da no-cors den Inhalt der Antwort verbirgt, gehen wir davon aus, 
-    // dass der Klick erfolgreich war.
-    statusDiv.innerHTML = "✅ Anfrage wurde gesendet.<br>Bitte prüfe dein Sheet oder schließe das Fenster.";
-})
-.catch(err => {
-    statusDiv.innerText = "Fehler: " + err;
-    statusDiv.style.color = "red";
-});
+                method: 'GET',
+                mode: 'no-cors' 
+            })
+            .then(() => {
+                statusDiv.innerHTML = "✅ Anfrage wurde gesendet.<br>Bitte prüfe dein Sheet oder schließe das Fenster.";
+            })
+            .catch(err => {
+                console.error(err);
+                statusDiv.innerText = "Fehler: Bitte Internetverbindung prüfen.";
+                statusDiv.style.color = "red";
+            });
         }
     </script>
 </body>
