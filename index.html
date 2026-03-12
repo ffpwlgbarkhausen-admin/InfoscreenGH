@@ -212,7 +212,7 @@
  
     <script>
         // Zentral definierte Basis-URL für alle Aufrufe
-    const BASE_URL = "https://script.google.com/macros/s/AKfycbwposBBKLVoFvtggGEtinhIC55quTy4HcdpS3yUKstPJtA4jEXunkq6pGDz4108EHvr/exec";
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbwX2b-JeXWIXEpT4gzgvnUx53LY-Xn7e9i4oAeTYL4HLE20tNpWOd9_KisM52Qqc8B1/exec";
     const API_URL = BASE_URL + "?page=data";
 
     // Funktion für den Admin-Button (wird im HTML aufgerufen)
@@ -221,7 +221,35 @@
     const githubAdminUrl = "https://ffpwlgbarkhausen-admin.github.io/InfoscreenGH/admin.html";
     window.open(githubAdminUrl, '_blank');
 }
+    async function loadAdminData() {
+    try {
+        // Wir fragen das Backend explizit nach den Admin-Daten
+        const response = await fetch(BASE_URL + "?page=adminData");
+        const data = await response.json();
+        
+        console.log("Daten geladen:", data);
+        renderAdminTable(data.reservierungen);
+    } catch (error) {
+        console.error("Fehler beim Laden der Admin-Daten:", error);
+        alert("Daten konnten nicht geladen werden. Bitte Internetverbindung prüfen.");
+    }
+}
 
+function renderAdminTable(res) {
+    const body = document.getElementById('res-body');
+    body.innerHTML = res.map(r => `
+        <tr>
+            <td>${r.objekt}</td>
+            <td>${r.name}</td>
+            <td>${r.start}</td>
+            <td>${r.status}</td>
+        </tr>
+    `).join('');
+}
+
+// Beim Laden der Seite direkt Daten holen
+window.onload = loadAdminData;
+        
     function updateTime() {
         const jetzt = new Date();
         document.getElementById("uhrzeit").innerHTML = `${String(jetzt.getHours()).padStart(2, '0')}<span class="blink">:</span>${String(jetzt.getMinutes()).padStart(2, '0')}`;
