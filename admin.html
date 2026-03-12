@@ -6,43 +6,45 @@
     <title>Admin-Panel Barkhausen</title>
     <script src="config.js"></script>
     <style>
-    body { font-family: 'Montserrat', sans-serif; background: #f4f4f4; padding: 20px; color: #333; }
-    
-    .container { 
-        max-width: 1400px; /* Mehr Breite für Desktop */
-        margin: auto; 
-        display: grid; /* Grid statt Flex für präzisere Kontrolle */
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
-        gap: 20px; 
-    }
+        body { font-family: 'Montserrat', sans-serif; background: #f4f4f4; margin: 0; padding: 0; color: #333; overflow-x: hidden; }
+        
+        /* Header-Stil */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; border-bottom: 2px solid #012796; }
+        
+        .container { 
+            padding: 20px;
+            max-width: 1400px; 
+            margin: auto; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 20px; 
+        }
 
-    h1 { grid-column: 1 / -1; text-align: center; margin-bottom: 20px; }
+        .card { 
+            background: white; padding: 20px; border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column;
+        }
 
-    .card { 
-        background: white; 
-        padding: 20px; 
-        border-radius: 12px; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* Damit die Listen-Karten nicht endlos in die Höhe wachsen */
-    #admin-res-list, #admin-news-list {
-        max-height: 500px; 
-        overflow-y: auto; /* Scrollbar, falls viele News da sind */
-    }
-
-    .list-item { border-bottom: 1px solid #eee; padding: 12px 0; }
-    input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-    button { cursor: pointer; padding: 10px 15px; border: none; border-radius: 6px; background: #012796; color: white; margin-top: 5px; }
-    .btn-del { background: #B40404; }
-</style>
+        #admin-res-list, #admin-news-list { max-height: 500px; overflow-y: auto; }
+        .list-item { border-bottom: 1px solid #eee; padding: 12px 0; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        button { cursor: pointer; padding: 10px 15px; border: none; border-radius: 6px; background: #012796; color: white; margin-top: 5px; }
+        .btn-del { background: #B40404; }
+    </style>
 </head>
 <body>
 
+<header>
+    <div style="display: flex; align-items: center;">
+        <img src="https://raw.githubusercontent.com/ffpwlgbarkhausen-admin/InfoscreenGH/main/logo.png" style="height: 40px; margin-right: 15px;">
+        <h2 style="margin:0;">Löschgruppe Barkhausen</h2>
+    </div>
+    <div style="font-size: 24px;">⚙️</div>
+</header>
+
 <div class="container">
-    <h1>⚙️ Verwaltung Barkhausen</h1>
+    <h1 style="grid-column: 1 / -1; margin: 10px 0;">Admin-Bereich</h1>
 
     <div class="card">
         <h2>📢 Neue News veröffentlichen</h2>
@@ -52,11 +54,10 @@
             <option value="Info">Info</option>
             <option value="Wichtig!">Wichtig!</option>
         </select>
-        <input type="text" id="news-foto" placeholder="Link zum Foto (URL einfügen)">
+        <input type="text" id="news-foto" placeholder="Dateiname (z.B. bilder/test.jpg)">
         <div style="margin-top: 5px; margin-bottom: 15px;">
             <a href="https://github.com/ffpwlgbarkhausen-admin/InfoscreenGH/tree/main/bilder" 
-               target="_blank" 
-               style="font-size: 0.8rem; color: #012796; text-decoration: underline;">
+               target="_blank" style="font-size: 0.8rem; color: #012796; text-decoration: underline;">
                📂 Hier Bilder in GitHub hochladen
             </a>
         </div>
@@ -87,7 +88,6 @@
     }
 
     function displayAdminData(data) {
-        // Reservierungen
         const resContainer = document.getElementById('admin-res-list');
         const offene = data.reservierungen.filter(r => r.status === 'Offen');
         resContainer.innerHTML = offene.length === 0 ? "<p>Alles erledigt!</p>" : 
@@ -99,45 +99,36 @@
                 </div>
             `).join('');
 
-        // News
         const newsContainer = document.getElementById('admin-news-list');
         newsContainer.innerHTML = data.news.map((n, i) => `
             <div class="list-item">
-        <strong>${n.titel}</strong> ${n.foto ? '📷' : ''}<br>
-        <small>${n.inhalt}</small><br>
-        <button onclick="deleteNews(${i})" class="btn-del">🗑️ Löschen</button>
-    </div>
+                <strong>${n.titel}</strong> ${n.foto ? '📷' : ''}<br>
+                <small>${n.inhalt}</small><br>
+                <button onclick="deleteNews(${i})" class="btn-del" style="padding: 5px 10px; font-size: 0.8rem;">🗑️ Löschen</button>
+            </div>
         `).join('');
     }
 
     async function saveNews() {
-    // 1. Dein GitHub Basis-Pfad
-    const GITHUB_BASE = "https://raw.githubusercontent.com/ffpwlgbarkhausen-admin/InfoscreenGH/main/";
-    
-    // 2. Den Dateinamen aus dem Eingabefeld holen
-    const fileName = document.getElementById('news-foto').value.trim();
-    
-    // 3. Den vollständigen Link zusammenbauen, falls ein Name eingegeben wurde
-    const fullUrl = fileName ? GITHUB_BASE + fileName : "";
+        const GITHUB_BASE = "https://raw.githubusercontent.com/ffpwlgbarkhausen-admin/InfoscreenGH/main/";
+        const fileName = document.getElementById('news-foto').value.trim();
+        const fullUrl = fileName ? GITHUB_BASE + fileName : "";
 
-    const data = {
-        action: "addNews",
-        titel: document.getElementById('news-titel').value,
-        inhalt: document.getElementById('news-inhalt').value,
-        kat: document.getElementById('news-kat').value,
-        foto: fullUrl // Hier wird jetzt der fertige, funktionierende Link gespeichert
-    };
-    
-    await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-    alert("News gespeichert!");
-    
-    // Felder leeren für die nächste News
-    document.getElementById('news-titel').value = "";
-    document.getElementById('news-inhalt').value = "";
-    document.getElementById('news-foto').value = "";
-    
-    refreshData();
-}
+        const data = {
+            action: "addNews",
+            titel: document.getElementById('news-titel').value,
+            inhalt: document.getElementById('news-inhalt').value,
+            kat: document.getElementById('news-kat').value,
+            foto: fullUrl 
+        };
+        
+        await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+        alert("News gespeichert!");
+        document.getElementById('news-titel').value = "";
+        document.getElementById('news-inhalt').value = "";
+        document.getElementById('news-foto').value = "";
+        refreshData();
+    }
 
     async function updateRes(idx, status) {
         await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateRes', row: idx, status: status }) });
