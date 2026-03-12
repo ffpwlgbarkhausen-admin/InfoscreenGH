@@ -212,27 +212,26 @@
     </div>
  
     <script>
-        // Zentral definierte Basis-URL für alle Aufrufe
-    const BASE_URL = "https://script.google.com/macros/s/AKfycbwX2b-JeXWIXEpT4gzgvnUx53LY-Xn7e9i4oAeTYL4HLE20tNpWOd9_KisM52Qqc8B1/exec";
-    const API_URL = BASE_URL + "?page=data";
+    // Wir nutzen nun CONFIG.BASE_URL aus deiner config.js
+const API_URL = CONFIG.BASE_URL + "?page=data";
+const ADMIN_API_URL = CONFIG.BASE_URL + "?page=adminData";
 
-    // Funktion für den Admin-Button (wird im HTML aufgerufen)
-    function openAdmin() {
-    // Wir rufen direkt die Seite auf GitHub auf, nicht über das Google Script
+// Funktion für den Admin-Button
+function openAdmin() {
     const githubAdminUrl = "https://ffpwlgbarkhausen-admin.github.io/InfoscreenGH/admin.html";
     window.open(githubAdminUrl, '_blank');
 }
-    async function loadAdminData() {
+
+async function loadAdminData() {
     try {
-        // Wir fragen das Backend explizit nach den Admin-Daten
-        const response = await fetch(BASE_URL + "?page=adminData");
+        // Hier nutzen wir jetzt die zentrale URL aus der Konfig
+        const response = await fetch(ADMIN_API_URL);
         const data = await response.json();
         
         console.log("Daten geladen:", data);
         renderAdminTable(data.reservierungen);
     } catch (error) {
         console.error("Fehler beim Laden der Admin-Daten:", error);
-        alert("Daten konnten nicht geladen werden. Bitte Internetverbindung prüfen.");
     }
 }
 
