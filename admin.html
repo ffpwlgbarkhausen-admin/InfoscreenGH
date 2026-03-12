@@ -59,20 +59,22 @@
     }
     
     async function saveNews() {
-        const data = {
-            titel: document.getElementById('news-titel').value,
-            inhalt: document.getElementById('news-inhalt').value,
-            kat: document.getElementById('news-kat').value
-        };
-        await fetch(URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        });
-        alert("News gespeichert!");
-        refreshData();
-    }
+    const data = {
+        action: "addNews", // <--- WICHTIG: Das steuert dein doPost!
+        titel: document.getElementById('news-titel').value,
+        inhalt: document.getElementById('news-inhalt').value,
+        kat: document.getElementById('news-kat').value
+    };
+    
+    await fetch(CONFIG.BASE_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    alert("News gespeichert!");
+    refreshData();
+}
 </script>
 </body>
 </html>
