@@ -6,14 +6,34 @@
     <title>Admin-Panel Barkhausen</title>
     <script src="config.js"></script>
     <style>
-        body { font-family: 'Montserrat', sans-serif; background: #f4f4f4; padding: 20px; color: #333; }
-        .container { max-width: 600px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .list-item { border-bottom: 1px solid #eee; padding: 10px 0; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        button { cursor: pointer; padding: 10px 15px; border: none; border-radius: 6px; background: #012796; color: white; margin-top: 5px; }
-        .btn-del { background: #B40404; }
-    </style>
+    body { font-family: 'Montserrat', sans-serif; background: #f4f4f4; padding: 20px; color: #333; }
+    
+    /* Der Container wird jetzt zum Flex-Grid */
+    .container { 
+        max-width: 1200px; /* Mehr Platz für nebeneinander */
+        margin: auto; 
+        display: flex; 
+        flex-wrap: wrap; /* Elemente rutschen auf Handy untereinander */
+        gap: 20px; 
+    }
+
+    h1 { width: 100%; text-align: center; }
+
+    /* Jede Karte bekommt eine flexible Breite */
+    .card { 
+        background: white; 
+        padding: 20px; 
+        border-radius: 12px; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        flex: 1 1 350px; /* Mindestbreite 350px, sonst Umbruch */
+        min-height: min-content;
+    }
+
+    .list-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+    input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+    button { cursor: pointer; padding: 10px 15px; border: none; border-radius: 6px; background: #012796; color: white; margin-top: 5px; }
+    .btn-del { background: #B40404; }
+</style>
 </head>
 <body>
 
