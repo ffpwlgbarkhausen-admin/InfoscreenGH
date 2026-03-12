@@ -122,6 +122,16 @@
 
 .blink { animation: blinker 1s linear infinite; }
 @keyframes blinker { 50% { opacity: 0; } }
+
+        /* Bild-Styling für News */
+.news-image {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    display: block;
+    object-fit: cover;
+}
     </style>
 </head>
 <body>
@@ -344,11 +354,8 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
         function renderNews(news) {
     // 1. Sortier-Logik
     const sortedNews = [...news].sort((a, b) => {
-        // Hier konsequent alles in Kleinbuchstaben
         const katA = (a.kat || "").toLowerCase();
         const katB = (b.kat || "").toLowerCase();
-        
-        // Vergleich mit kleingeschriebener Version
         const istWichtigA = (katA === "wichtig!");
         const istWichtigB = (katB === "wichtig!");
 
@@ -360,13 +367,12 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
     // 2. Anzeige-Logik
     document.getElementById('news-container').innerHTML = sortedNews.map(n => {
         const kat = (n.kat || "Info");
-        const katLower = kat.toLowerCase(); // Alles in Kleinbuchstaben für den Check
+        const katLower = kat.toLowerCase();
         
         let farbe = "#012796"; // Blau für Info
         let blinkClass = "";
         let icon = "";
 
-        // Vergleich mit "wichtig!" (klein)
         if (katLower === "wichtig!") {
             farbe = "#B40404"; // Rot für Wichtig!
             blinkClass = "blink"; 
@@ -375,6 +381,9 @@ document.getElementById('swipeArea').addEventListener('touchend', e => {
 
         return `
             <div style="border-left:8px solid ${farbe}; padding:15px; background:var(--card-bg); margin-top:15px; border-radius:8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                
+                ${n.foto ? `<img src="${n.foto}" class="news-image">` : ''}
+
                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <h3 style="margin:0; color:${farbe}" class="${blinkClass}">${icon}${n.titel}</h3>
                     <span style="font-size: 0.65rem; font-weight: bold; text-transform: uppercase; opacity: 0.6; background: #eee; padding: 2px 5px; border-radius: 4px;">${kat}</span>
