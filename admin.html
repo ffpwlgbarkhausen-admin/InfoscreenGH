@@ -94,8 +94,8 @@
             offene.map((r, i) => `
                 <div class="list-item">
                     <strong>${r.name}</strong> (${r.objekt})<br>
-                    <button onclick="updateRes(${i}, 'Genehmigt')">✔ Genehmigen</button>
-                    <button onclick="updateRes(${i}, 'Abgelehnt')" class="btn-del">✖ Ablehnen</button>
+                    <button onclick="updateRes(${i}, 'Genehmigt')" style="padding: 5px 10px; font-size: 0.8rem;">✔ OK</button>
+                    <button onclick="updateRes(${i}, 'Abgelehnt')" class="btn-del" style="padding: 5px 10px; font-size: 0.8rem;">✖ Nein</button>
                 </div>
             `).join('');
 
