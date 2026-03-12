@@ -8,28 +8,32 @@
     <style>
     body { font-family: 'Montserrat', sans-serif; background: #f4f4f4; padding: 20px; color: #333; }
     
-    /* Der Container wird jetzt zum Flex-Grid */
     .container { 
-        max-width: 1200px; /* Mehr Platz für nebeneinander */
+        max-width: 1400px; /* Mehr Breite für Desktop */
         margin: auto; 
-        display: flex; 
-        flex-wrap: wrap; /* Elemente rutschen auf Handy untereinander */
+        display: grid; /* Grid statt Flex für präzisere Kontrolle */
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
         gap: 20px; 
     }
 
-    h1 { width: 100%; text-align: center; }
+    h1 { grid-column: 1 / -1; text-align: center; margin-bottom: 20px; }
 
-    /* Jede Karte bekommt eine flexible Breite */
     .card { 
         background: white; 
         padding: 20px; 
         border-radius: 12px; 
         box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        flex: 1 1 350px; /* Mindestbreite 350px, sonst Umbruch */
-        min-height: min-content;
+        display: flex;
+        flex-direction: column;
     }
 
-    .list-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+    /* Damit die Listen-Karten nicht endlos in die Höhe wachsen */
+    #admin-res-list, #admin-news-list {
+        max-height: 500px; 
+        overflow-y: auto; /* Scrollbar, falls viele News da sind */
+    }
+
+    .list-item { border-bottom: 1px solid #eee; padding: 12px 0; }
     input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
     button { cursor: pointer; padding: 10px 15px; border: none; border-radius: 6px; background: #012796; color: white; margin-top: 5px; }
     .btn-del { background: #B40404; }
