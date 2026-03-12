@@ -72,10 +72,10 @@
         const newsContainer = document.getElementById('admin-news-list');
         newsContainer.innerHTML = data.news.map((n, i) => `
             <div class="list-item">
-                <strong>${n.titel}</strong><br>
-                <small>${n.inhalt}</small><br>
-                <button onclick="deleteNews(${i})" class="btn-del">🗑️ Löschen</button>
-            </div>
+        <strong>${n.titel}</strong> ${n.foto ? '📷' : ''}<br>
+        <small>${n.inhalt}</small><br>
+        <button onclick="deleteNews(${i})" class="btn-del">🗑️ Löschen</button>
+    </div>
         `).join('');
     }
 
